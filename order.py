@@ -10,6 +10,7 @@ import random
 import datetime
 
 # Communication patterns:
+# Use a message-broker with 'direct' exchange to enable interaction
 import pika
 # If see errors like "ModuleNotFoundError: No module named 'pika'", need to
 # make sure the 'pip' version used to install 'pika' matches the python version used.
