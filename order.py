@@ -37,16 +37,19 @@ def orders_save(orders_file):
 class Order_Item:
     def __init__(self):
         self.OrderID = 0
-        self.CustomerID = 0
+        # self.CustomerID = 0
         self.Datetime = 0
         self.Base = ''
         self.Toppings = ''
+        self.TotalPrice = ''
         self.Status = ''
 
     # return an order item as a JSON object
     def json(self):
-        return {'OrderID': self.OrderID, 'CustomerID': self.CustomerID, 'Datetime': self.Datetime, 'Base': self.Base, 'Toppings': self.Toppings, 'Status': self.Status}
+        return {'OrderID': self.OrderID, 'Datetime': self.Datetime, 'Base': self.Base, 'Toppings': self.Toppings, 'TotalPrice': self.TotalPrice,'Status': self.Status}
 
+ 
+@app.route("/tables")
 def get_all():
     """Return all orders as a JSON object"""
     return Order.orders
@@ -82,7 +85,7 @@ def create_order(order_input):
 
     # ***Create a new order: set up data fields in the order as a JSON object (i.e., a python dictionary)
     order = dict()
-    order["customer_id"] = cart_order['customer_id']
+    # order["customer_id"] = cart_order['customer_id']
     order["order_id"] = Order.last_order_id + 1
     order["timestamp"] = datetime.datetime.now()
     order["order_item"] = []
