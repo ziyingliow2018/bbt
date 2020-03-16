@@ -35,7 +35,7 @@
     <div id="search-container" class="container">
         <body>
             <form id="isbnform" method="get">
-                Enter orderID here: </br><input name="isbn13" type="text" id="isbn13"></br></br>
+                Enter orderID here: </br><input name="orderid" type="text" id="orderid" class="form-control" placeholder="OrderID"></br></br>
                 <input type='submit' class="btn btn-primary" href="search_order.html"> 
                 <a class="btn btn-primary" href="staff_UI.html">Back</a>
             </form>            
@@ -56,3 +56,126 @@
         </body>
     </div>
 </html>
+
+<script>
+    // Helper function to display error message
+    function showError(message) {
+            // Hide the table and button in the event of error
+            $('#SingleOrderTable').hide();
+    
+            // Display an error under the main container
+            $('#search-container')
+                .append("<label>"+message+"</label>");
+        }
+
+    // $(function () {
+
+    //     //This is considered an event call
+    //     //It listens to the isbnForm <form id="isbnForm">
+    //     //When submitted button is clicked it perform a series of actions through a function
+    //     $("#isbnform").submit(async (event) => {
+    //         //Prevents screen from refreshing when submitting as we are not going to another page
+    //         event.preventDefault();
+
+    //         $("#error").hide();
+
+    //         //Get ISBN Number from the form
+    //         var orderid = $('#orderid').val()
+    //         var serviceURL = "http://127.0.0.1:5000/order" + "/" + orderid;
+
+    //         try {
+    //             const response =
+    //                 await fetch(
+    //                     serviceURL, { method: 'GET', mode:'cors' }
+    //                 );
+    //             console.log(data)
+    //             const data = await response.json();
+    //             if (response.ok) {
+    //                 foundOrder =
+    //                     "<tbody>" +
+    //                     "<tr>" +
+    //                     "<td>" + data.orderid + "</td>" +
+    //                     "<td>" + data.base + "</td>" +
+    //                     "<td>" + data.toppings + "</td>" +
+    //                     "<td>" + data.totalprice + "</td>" +
+    //                     "<td>" + data.status + "</td>";
+    //                     if (order.status == "Incomplete"){
+    //                     "<td> <input type= 'submit' name= 'update order' value = 'Update'></td>";
+    //                     } else {
+    //                         "<td></td>";
+    //                     } 
+    //                     "</tr>" +
+    //                     "<tbody>";
+    //                 // $('#message').hide();
+    //                 // $('#booksTable tbody').empty();
+    //                 $('#SingleOrderTable').append(foundOrder);
+    //             } else {
+    //                 showError("Order data not found.");
+    //             }
+
+    //         } catch (error) {
+    //             // Errors when calling the service; such as network error, 
+    //             // service offline, etc
+    //             showError
+    //                 ('There is a problem retrieving books data, please try again later.<br />' + error);
+
+    //         }
+    //     })
+    // });
+
+    $("#isbnform").submit(async (event) => {
+
+        //prevent screen from refreshing when submitting  as we arenot going to another page
+        event.preventDefault()
+        // $("#error").hide();
+
+        //get isbn number from form
+        var orderid = $('#orderid').val()
+        var serviceURL = "http://127.0.0.1:5000/order" + "/" + orderid;
+
+        try {
+            const response =
+                 await fetch(
+                   serviceURL, { method: 'GET', mode: 'cors'}
+                );
+            const data = await response.json();
+            var order = data;
+
+            // array or array.length are false
+            if (response.ok) {
+                // for loop to setup all table rows with obtained book dat
+                console.log(data);
+                if (status.order=="Incomplete"){
+                    eachRow =
+                        "<td>" + order.orderid + "</td>"  +
+                        "<td>" + order.base + "</td>" +
+                        "<td>" + order.toppings + "</td>" +
+                        "<td>" + order.totalprice + "</td>" +
+                        "<td>" + order.status + "</td>" +
+                        "<td> <input type= 'submit' name= 'update order' value = 'Update'></td>";
+                } else {
+                    eachRow =
+                        "<td>" + order.orderid + "</td>"  +
+                        "<td>" + order.base + "</td>" +
+                        "<td>" + order.toppings + "</td>" +
+                        "<td>" + order.totalprice + "</td>" +
+                        "<td>" + order.status + "</td>" +
+                        "<td>Order is complete </td>";
+                }
+                $('#SingleOrderTable').append(eachRow);
+            } else {
+                showError('Order not found.')
+             }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            showError
+                ('There is a problem retrieving order data, please try again later.<br />' + error);
+
+        } // error
+
+    }
+)
+
+
+</script>
