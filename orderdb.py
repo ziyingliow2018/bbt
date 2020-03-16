@@ -38,13 +38,13 @@ def get_all():
     return jsonify({"orders": [order.json() for order in order.query.all()]})
  
  
-@app.route("/book/<string:orderid>")
+@app.route("/order/<string:orderid>")
 def find_by_orderid(orderid):
-    book = Book.query.filter_by(orderid=orderid).first()
-    if book:
-        return jsonify(book.json())
-    return jsonify({"message": "Book not found."}), 404
- 
+    single_order = order.query.filter_by(orderid=orderid).first()
+    if order:
+        return jsonify(single_order.json())
+    return jsonify({"message": "Order not found."}), 404
+
  
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
