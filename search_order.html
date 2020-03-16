@@ -129,7 +129,7 @@
         event.preventDefault()
         // $("#error").hide();
 
-        //get isbn number from form
+        //get order number from form
         var orderid = $('#orderid').val()
         var serviceURL = "http://127.0.0.1:5000/order" + "/" + orderid;
 
@@ -143,7 +143,7 @@
 
             // array or array.length are false
             if (response.ok) {
-                // for loop to setup all table rows with obtained book dat
+                // for loop to setup all table rows with obtained order data
                 console.log(data);
                 if (status.order=="Incomplete"){
                     eachRow =
@@ -172,7 +172,7 @@
             showError
                 ('There is a problem retrieving order data, please try again later.<br />' + error);
 
-        } // error
+        } 
 
     }
 )
