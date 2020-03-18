@@ -89,12 +89,13 @@ def create_order(order_input):
     order["order_id"] = Order.last_order_id + 1
     order["timestamp"] = datetime.datetime.now()
     order["order_item"] = []
-    cart_item = cart_order['cart_item']
+    #idontunds
     for index, ci in enumerate(cart_item):
-        order["order_item"].append({"book_id": cart_item[index]['book_id'],
-                                "quantity": cart_item[index]['quantity'],
+        order["order_item"].append({"order_id": order["order_id"],
+                                "timestamp": order["timestamp"],
+                                "order_item": cart_item[index]['quantity'],
                                 "item_id": index + 1,
-                                "order_id": order["order_id"]
+                                
         })
     # check if order creation is successful
     if len(order["order_item"])<1:
