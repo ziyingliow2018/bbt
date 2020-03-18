@@ -13,7 +13,7 @@ CORS(app)
 class order(db.Model):
     __tablename__ = 'order'
  
-    orderid = db.Column(db.String(13), primary_key=True)
+  orderid = db.Column(db.String(13), primary_key=True)
     base = db.Column(db.String(100), nullable=False)
     datetime = db.Column(db.Date, nullable=False)
     toppings = db.Column(db.String(200), nullable=False)
@@ -45,7 +45,7 @@ def find_by_orderid(orderid):
         return jsonify(single_order.json())
     return jsonify({"message": "Order not found."}), 404
 
-//send to notification API
+# send to notification API
  
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
