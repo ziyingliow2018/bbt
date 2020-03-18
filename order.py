@@ -143,7 +143,7 @@ def send_order(order):
 
     # send the message
     # always inform Monitoring for logging no matter if successful or not
-    channel.basic_publish(exchange=exchangename, routing_key="notification.info", body=message)
+    channel.basic_publish(exchange=exchangename, routing_key="monitoring.info", body=message)
         # By default, the message is "transient" within the broker;
         #  i.e., if the monitoring is offline or the broker cannot match the routing key for the message, the message is lost.
         # If need durability of a message, need to declare the queue in the sender (see sample code below).
