@@ -49,7 +49,7 @@ class Order_Item:
         return {'OrderID': self.OrderID, 'Datetime': self.Datetime, 'Base': self.Base, 'Toppings': self.Toppings, 'TotalPrice': self.TotalPrice,'Status': self.Status}
 
  
-@app.route("/tables")
+@app.route("/orders")
 def get_all():
     """Return all orders as a JSON object"""
     return Order.orders
@@ -143,28 +143,23 @@ def send_order(order):
 
     # send the message
     # always inform Monitoring for logging no matter if successful or not
-    channel.basic_publish(exchange=exchangename, routing_key="shipping.info", body=message)
+    channel.basic_publish(exchange=exchangename, routing_key="notification.info", body=message)
         # By default, the message is "transient" within the broker;
         #  i.e., if the monitoring is offline or the broker cannot match the routing key for the message, the message is lost.
         # If need durability of a message, need to declare the queue in the sender (see sample code below).
 
     if "status" in order: # if some error happened in order creation
         # inform Error handler
-        channel.queue_declare(queue='errorhandler', durable=True) # make sure the queue used by the error handler exist and durable
-        channel.queue_bind(exchange=exchangename, queue='errorhandler', routing_key='shipping.error') # make sure the queue is bound to the exchange
-        channel.basic_publish(exchange=exchangename, routing_key="shipping.error", body=message,
-            properties=pika.BasicProperties(delivery_mode = 2) # make message persistent within the matching queues until it is received by some receiver (the matching queues have to exist and be durable and bound to the exchange)
-        )
-        print("Order status ({:d}) sent to error handler.".format(order["status"]))
+        print("There has been an error.".format(order["status"]))
     else: # inform Monitoring and exit
         # prepare the channel and send a message to Monitoring
-        channel.queue_declare(queue='monitoring', durable=True) # make sure the queue used by Shipping exist and durable
-        channel.queue_bind(exchange=exchangename, queue='monitoring', routing_key='monitoring.order') # make sure the queue is bound to the exchange
-        channel.basic_publish(exchange=exchangename, routing_key="monitoring.order", body=message,
+        channel.queue_declare(queue='notification', durable=True) # make sure the queue used by Shipping exist and durable
+        channel.queue_bind(exchange=exchangename, queue='notification', routing_key='notification.info') # make sure the queue is bound to the exchange
+        channel.basic_publish(exchange=exchangename, routing_key="notification.info", body=message,
             properties=pika.BasicProperties(delivery_mode = 2, # make message persistent within the matching queues until it is received by some receiver (the matching queues have to exist and be durable and bound to the exchange, which are ensured by the previous two api calls)
             )
         )
-        print("Order sent to monitoring.")
+        print("Order sent to notfication.")
     # close the connection to the broker
     connection.close()
 
