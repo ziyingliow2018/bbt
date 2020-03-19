@@ -9,17 +9,22 @@ SET time_zone = "+00:00";
 
 DROP TABLE IF EXISTS `item`;
 CREATE TABLE IF NOT EXISTS `item` (
-  `ItemID` int(11) NOT NULL auto_increment,
+  `ItemID` int(11) NOT NULL,
   `ItemName` varchar(50) NOT NULL,
   `Price` decimal(10,2) NOT NULL,
+  `Type` varchar(10) NOT NULL,
   PRIMARY KEY (`ItemID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `item` (`ItemID`, `ItemName`, `Price`) VALUES
-(1,'Green Milk Tea with pearls','3.50'),
-(2,'Milk Tea with pearls','3.50'),
-(3,'Black tea with herbal jelly','3.00'),
-(4,'Green tea with cream','3.00');
+INSERT INTO `item` (`ItemID`, `ItemName`, `Price`,`Type`) VALUES
+(1,'Green Milk Tea','3.50','base'),
+(2,'Milk Tea','3.50','base'),
+(3,'Black tea','3.00','base'),
+(4,'Green tea','3.00','base'),
+(5,'Pearls','0.50','topping'),
+(6,'Herbal jelly','0.8','topping'),
+(7,'tea cream','0.8','topping'),
+(8,'cheese cream','3.00','topping');
 
 DROP TABLE IF EXISTS `order`;
 CREATE TABLE IF NOT EXISTS `order` (
