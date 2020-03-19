@@ -8,10 +8,20 @@ import sys
 import os
 import random
 import datetime
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 # Communication patterns:
 # Use a message-broker with 'direct' exchange to enable interaction
 import pika
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/item'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+CORS(app)
 # If see errors like "ModuleNotFoundError: No module named 'pika'", need to
 # make sure the 'pip' version used to install 'pika' matches the python version used.
 import mysql.connector
@@ -78,7 +88,7 @@ class Order_Item:
         return {'OrderID': self.OrderID, 'Datetime': self.Datetime, 'Base': self.Base, 'Toppings': self.Toppings, 'TotalPrice': self.TotalPrice,'Status': self.Status}
 
  
-@app.route("/orders")
+#@app.route("/orders")
 def get_all():
     """Return all orders as a JSON object"""
     return Order.orders
@@ -92,65 +102,67 @@ def find_by_order_id(OrderID):
         return {'message': 'Multiple orders found for id ' + str(OrderID), 'orders': order}
     else:
         return {'message': 'Order not found for id ' + str(OrderID)}
- 
-def create_order(order_input):
-    """Create a new order according to the order_input"""
-    # assume status==200 indicates success
-    status = 200
-    message = "Success"
 
-    # Load the order info from a cart (from a file in this case; can use DB too, or receive from HTTP requests)
-    try:
-        with open(order_input) as sample_order_file:
-            cart_order = json.load(sample_order_file)
-    except:
-        status = 501
-        message = "An error occurred in loading the order cart."
-    finally:
-        sample_order_file.close()
-    if status!=200:
-        print("Failed order creation.")
-        return {'status': status, 'message': message}
+# def create_order(order_input):
+#     """Create a new order according to the order_input"""
+#     # assume status==200 indicates success
+#     status = 200
+#     message = "Success"
 
-    # ***Create a new order: set up data fields in the order as a JSON object (i.e., a python dictionary)
-    order = dict()
-    # order["customer_id"] = cart_order['customer_id']
-    order["order_id"] = Order.last_order_id + 1
-    order["timestamp"] = datetime.datetime.now()
-    order["order_item"] = []
-    #idontunds
-    for index, ci in enumerate(cart_item):
-        order["order_item"].append({"order_id": order["order_id"],
-                                "timestamp": order["timestamp"],
-                                "order_item": cart_item[index]['quantity'],
-                                "item_id": index + 1,
+    # sample_order_file = ''
+
+    # # Load the order info from a cart (from a file in this case; can use DB too, or receive from HTTP requests)
+    # try:
+    #     with open(order_input) as sample_order_file:
+    #         cart_order = json.load(sample_order_file)
+    # except:
+    #     status = 501
+    #     message = "An error occurred in loading the order cart."
+    # finally:
+    #     sample_order_file.close()
+    # if status!=200:
+    #     print("Failed order creation.")
+    #     return {'status': status, 'message': message}
+
+    # # ***Create a new order: set up data fields in the order as a JSON object (i.e., a python dictionary)
+    # order = dict()
+    # # order["customer_id"] = cart_order['customer_id']
+    # order["order_id"] = Order.last_order_id + 1
+    # order["timestamp"] = datetime.datetime.now()
+    # order["order_item"] = []
+    # #idontunds
+    # for index, ci in enumerate(cart_item):
+    #     order["order_item"].append({"order_id": order["order_id"],
+    #                             "timestamp": order["timestamp"],
+    #                             "order_item": cart_item[index]['quantity'],
+    #                             "item_id": index + 1,
                                 
-        })
-    # check if order creation is successful
-    if len(order["order_item"])<1:
-        status = 404
-        message = "Empty order."
-    # Simulate other errors in order creation via a random bit
-    result = bool(random.getrandbits(1))
-    if not result:
-        status = 500
-        message = "A simulated error occurred when creating the order."
+    #     })
+    # # check if order creation is successful
+    # if len(order["order_item"])<1:
+    #     status = 404
+    #     message = "Empty order."
+    # # Simulate other errors in order creation via a random bit
+    # result = bool(random.getrandbits(1))
+    # if not result:
+    #     status = 500
+    #     message = "A simulated error occurred when creating the order."
 
-    if status!=200:
-        print("Failed order creation.")
-        return {'status': status, 'message': message}
+    # if status!=200:
+    #     print("Failed order creation.")
+    #     return {'status': status, 'message': message}
 
-    # Append the newly created order to the existing orders
-    Order.orders["orders"].append(order)
-    # Increment the last_order_id; if using a DB, DBMS can manage this
-    Order.last_order_id = Order.last_order_id + 1
-    # Write the newly created order back to the file for permanent storage; if using a DB, this will be done by the DBMS
-    orders_save("orders.new.json")
+    # # Append the newly created order to the existing orders
+    # Order.orders["orders"].append(order)
+    # # Increment the last_order_id; if using a DB, DBMS can manage this
+    # Order.last_order_id = Order.last_order_id + 1
+    # # Write the newly created order back to the file for permanent storage; if using a DB, this will be done by the DBMS
+    # orders_save("orders.new.json")
 
-    # Return the newly created order when creation is succssful
-    if status==200:
-        print("OK order creation.")
-        return order
+    # # Return the newly created order when creation is succssful
+    # if status==200:
+    #     print("OK order creation.")
+    #     return order
 
 def send_order(order):
     """inform Shipping/Monitoring/Error as needed"""
@@ -196,7 +208,7 @@ def send_order(order):
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
     print("This is " + os.path.basename(__file__) + ": creating an order...")
-    order = create_order("sample_order.txt")
+    # order = create_order("sample_order.txt")
     send_order(order)
 #    print(get_all())
 #    print(find_by_order_id(3))
