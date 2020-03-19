@@ -8,36 +8,48 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     
-    <title>BUBBLE TEA</title>
+    <title>SMÖÖ CHÁ</title>
+
+    <!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+    
+    <script src="https://code.jquery.com/jquery-2.1.0.min.js" ></script>
 
     <!--  Main CSS File -->
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/logincss.css" rel="stylesheet">
 </head>
 
 <body>
-    <div id="fb-root"></div>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v6.0"></script>
+    <!-- <div style="background-image:url('/assets/img/background.jpg');"> -->
+    <form action="./index.html" method="post">
+        <div id="formWrapper">
+            <div id="form">
+                <div class="logo">
+                    <h1 class="text-center head">SMÖÖ CHÁ</h1>
+                </div>
 
-        <form action="./index.html" method="post">
-            <div class="form sign-in">
-                <h2>Welcome</h2>
-                <label>
-                <span>Email</span>
-                <input type="email" />
-                </label>
-                <label>
-                <span>Password</span>
-                <input type="password" />
-                </label>
-                <p class="forgot-pass">Forgot password?</p>
-                <button type="submit" class="submit">Sign In</button>
+                <div class="form-item">
+                    <p class="formLabel">Email</p>
+                    <input type="email" name="email" id="email" class="form-style" autocomplete="off"/>
+                </div>
 
-                <div class="fb-login-button" data-width="" data-size="medium" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false"></div>
-                <!-- <button type="button" class="fb-btn">Connect with <span>facebook</span></button> -->
+                <div class="form-item">
+                    <p class="formLabel">Password</p>
+                    <input type="password" name="password" id="password" class="form-style" />
+                    <br>
+                    <input type="submit" class="login" value="Sign In"><br><br><hr>
+                </div>
+
+                <div class="form-item">
+                    <input type="button" class="login facebook" value='Connect with facebook'>
+                    <br>
+                    
+                    <div class="clear-fix"></div>
+                </div>
             </div>
-        </form>
-    </div>
-
+        </div>
+    </form>
+<!-- </div> -->
 </body>
-
 </html>
