@@ -14,6 +14,35 @@ import datetime
 import pika
 # If see errors like "ModuleNotFoundError: No module named 'pika'", need to
 # make sure the 'pip' version used to install 'pika' matches the python version used.
+import mysql.connector
+
+db = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  passwd="",
+  database="bubbletea"
+)
+
+mycursor = mydb.cursor()
+
+mycursor.execute("SELECT * FROM order")
+
+try:
+    orders = mycursor.fetchall()
+
+    orders = []
+    for row in orders:
+        orderid = row[0]
+        base = row[1]
+        datetime = row[2]
+        toppings = row[3]
+        totalprice = row[4]
+        status = row[5]
+        order = [orderid, base, datetime, toppings, totalprice, status]
+        orders.append(order)
+except:
+    print("Unable to fetch data")
+db.close()
 
 class Order:
     # Load existing orders from a JSON file (for simplicity here). In reality, orders will be stored in DB. 
@@ -151,7 +180,7 @@ def send_order(order):
     if "status" in order: # if some error happened in order creation
         # inform Error handler
         print("There has been an error.".format(order["status"]))
-    else: # inform Monitoring and exit
+    else: # inform Notification and exit
         # prepare the channel and send a message to Monitoring
         channel.queue_declare(queue='notification', durable=True) # make sure the queue used by Shipping exist and durable
         channel.queue_bind(exchange=exchangename, queue='notification', routing_key='notification.info') # make sure the queue is bound to the exchange
