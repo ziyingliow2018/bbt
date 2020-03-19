@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+ <!-- Latest compiled and minified CSS -->
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+ integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
 <head>
     <meta charset="utf-8">
@@ -12,7 +15,9 @@
 </head>
 
 <body>
-    <div class="cont">
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v6.0"></script>
+
         <form action="./index.html" method="post">
             <div class="form sign-in">
                 <h2>Welcome</h2>
@@ -26,7 +31,9 @@
                 </label>
                 <p class="forgot-pass">Forgot password?</p>
                 <button type="submit" class="submit">Sign In</button>
-                <button type="button" class="fb-btn">Connect with <span>facebook</span></button>
+
+                <div class="fb-login-button" data-width="" data-size="medium" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false"></div>
+                <!-- <button type="button" class="fb-btn">Connect with <span>facebook</span></button> -->
             </div>
         </form>
     </div>
