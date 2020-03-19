@@ -46,21 +46,21 @@ def find_by_orderid(orderid):
     return jsonify({"message": "Order not found."}), 404
 
 
-@app.route("/book/<string:isbn13>", methods=['POST'])
-def create_book(isbn13):
-    if (Book.query.filter_by(isbn13=isbn13).first()):
-        return jsonify({"message": "A book with isbn13 '{}' already exists.".format(isbn13)}), 400
+# @app.route("/order/<string:orderid>", methods=['POST'])
+# def create_order(orderid):
+#     if (order.query.filter_by(orderid=orderid).first()):
+#         return jsonify({"message": "A order with '{}' already exists.".format(orderid)}), 400
  
-    data = request.get_json()
-    book = Book(isbn13, **data)
+#     data = request.get_json()
+#     order = order(orderid, **data)
  
-    try:
-        db.session.add(book)
-        db.session.commit()
-    except:
-        return jsonify({"message": "An error occurred creating the book."}), 500
+#     try:
+#         db.session.add(order)
+#         db.session.commit()
+#     except:
+#         return jsonify({"message": "An error occurred creating the order."}), 500
  
-    return jsonify(book.json()), 201
+#     return jsonify(order.json()), 201
 
  
 if __name__ == '__main__':
