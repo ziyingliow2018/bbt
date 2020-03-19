@@ -7,15 +7,15 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-DROP TABLE IF EXISTS `pricing`;
-CREATE TABLE IF NOT EXISTS `pricing` (
+DROP TABLE IF EXISTS `item`;
+CREATE TABLE IF NOT EXISTS `item` (
   `ItemID` int(11) NOT NULL auto_increment,
   `ItemName` varchar(50) NOT NULL,
   `Price` decimal(10,2) NOT NULL,
   PRIMARY KEY (`ItemID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `pricing` (`ItemID`, `ItemName`, `Price`) VALUES
+INSERT INTO `item` (`ItemID`, `ItemName`, `Price`) VALUES
 (1,'Green Milk Tea with pearls','3.50'),
 (2,'Milk Tea with pearls','3.50'),
 (3,'Black tea with herbal jelly','3.00'),
