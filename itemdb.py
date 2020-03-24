@@ -15,11 +15,13 @@ class item(db.Model):
     itemid = db.Column(db.String(10), primary_key=True)
     itemname = db.Column(db.String(64), nullable=False)
     price = db.Column(db.Float(precision=2), nullable=False)
+    # itemtype = db.Column(db.String(20), nullable=False)
    
     def __init__(self, itemid, itemname, price):
         self.itemid = itemid
         self.itemname = itemname
         self.price = price
+        # self.itemtype = itemtype
  
     def json(self):
         return {"itemid": self.itemid, "itemname": self.itemname, "price": self.price}
