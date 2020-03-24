@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>SMÖÖ CHÁ</title>
+  <meta content="" name="descriptison">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="assets/img/.png" rel="icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+  <link href="assets/vendor/venobox/venobox.css" rel="stylesheet">
+
+  <!--  Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+  <!-- ======= Header ======= -->
+  <header id="header">
+    <div class="container d-flex">
+
+      <div class="logo mr-auto">
+        <h1 class="text-light"><a href="index.html"><span><img src='assets/img/bbt_logo.jpg' style="width:200px;height:150px;"></span></a></h1>
+      </div>
+
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main">
+
+    <!-- ======= Payment Section ======= -->
+    <section id="payment" class="payment">
+      <div class="container">
+
+        <div class="section-title">
+          <h2>Payment</h2>
+        </div>
+
+        <div class="form">
+            <form action="./thankyou.html" method="POST" role="form" class="submit">
+                <div class="form-group">
+                    
+                    <h5><strong>Contact Information</strong></h5>
+                    <label for="name">Name</label>
+                    <input type="text" name="name" class="form-control" id="name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" />
+                    <div class="validate"></div>
+
+                    <label for="tel">Tel</label>
+                    <input type="test" class="form-control" name="tel" id="tel" data-rule="minlen:8" data-msg="Please enter at least 8 numbers" />
+                    <div class="validate"></div>
+
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" name="email" id="email" data-rule="email" data-msg="Please enter a valid email" />
+                    <div class="validate"></div><br>
+
+                    <label for="email">Credit Card Details</label>
+                    <input type="test" class="form-control" name="credit" id="credit" placeholder="Card Number" data-rule="minlen:16" data-msg="Please enter at least 16 digits" /><br>
+                    <input type="text" class="form-control" name="creditname" id="creditname" placeholder="Name on Card" data-rule="minlen:4" data-msg="Please enter at least 4 chars" /><br>
+                    <input type="test" class="form-control" name="creditdate" id="creditdate" placeholder="Expiration Date (MM/YY)" data-rule="minlen:4" data-msg="Please enter a valid date" /><br>
+                    <input type="test" class="form-control" name="creditcode" id="creditcode" placeholder="Security Code" data-rule="minlen:3" data-msg="Please enter at least 3 chars" />
+                    <div class="validate"></div><br>
+                    
+                    <hr>
+                    <h6>OR</h6>
+                    <hr><br>
+                    <!--insert paypal API here-->
+
+                    <div class="text-center">
+                        <button type="submit" class="submit">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+  
+      </div>  
+    </section><!-- End Payment Section -->
+    
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+    <div class="container">
+      <div class="copyright">
+        &copy; Copyright <strong><span>ESDBBTT5</span></strong>. All Rights Reserved
+      </div>
+      <div class="credits">
+        Designed by ESDBBTT5
+      </div>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/jquery/jquery.min.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/vendor/jquery-sticky/jquery.sticky.js"></script>
+  <script src="assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+  <script src="assets/vendor/counterup/counterup.min.js"></script>
+  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="assets/vendor/venobox/venobox.min.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+</body>
+
+</html>

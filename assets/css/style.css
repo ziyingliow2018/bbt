@@ -1,13 +1,3 @@
-/**
-* Template Name: Shuffle - v2.0.0
-* Template URL: https://bootstrapmade.com/bootstrap-3-one-page-template-free-shuffle/
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
-
-/*--------------------------------------------------------------
-# General
---------------------------------------------------------------*/
 body {
   font-family: "Open Sans", sans-serif;
   color: #334240;
@@ -442,88 +432,6 @@ section {
 }
 
 /*--------------------------------------------------------------
-# Our Services
---------------------------------------------------------------*/
-.services .icon-box {
-  padding: 30px;
-  position: relative;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 0 29px 0 rgba(68, 88, 144, 0.12);
-  transition: all 0.3s ease-in-out;
-  border-radius: 8px;
-  z-index: 1;
-}
-
-.services .icon-box::before {
-  content: '';
-  position: absolute;
-  background: #aff4e9;
-  right: -60px;
-  top: -40px;
-  width: 100px;
-  height: 100px;
-  border-radius: 50px;
-  transition: all 0.3s;
-  z-index: -1;
-}
-
-.services .icon-box:hover::before {
-  background: #1bbca3;
-  right: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 0px;
-}
-
-.services .icon {
-  margin: 0 auto 20px auto;
-  padding-top: 10px;
-  display: inline-block;
-  text-align: center;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  background: #1bbca3;
-  transition: all 0.3s ease-in-out;
-}
-
-.services .icon i {
-  font-size: 36px;
-  line-height: 1;
-  color: #fff;
-}
-
-.services .title {
-  font-weight: 700;
-  margin-bottom: 15px;
-  font-size: 18px;
-}
-
-.services .title a {
-  color: #425451;
-}
-
-.services .description {
-  font-size: 15px;
-  line-height: 28px;
-  margin-bottom: 0;
-}
-
-.services .icon-box:hover .title a, .services .icon-box:hover .description {
-  color: #fff;
-}
-
-.services .icon-box:hover .icon {
-  background: #fff;
-}
-
-.services .icon-box:hover .icon i {
-  color: #1bbca3;
-}
-
-/*--------------------------------------------------------------
 # Cta
 --------------------------------------------------------------*/
 .cta {
@@ -559,45 +467,6 @@ section {
 .cta .cta-btn:hover {
   background: #1bbca3;
   border: 2px solid #1bbca3;
-}
-
-/*--------------------------------------------------------------
-# More Services
---------------------------------------------------------------*/
-.more-services img {
-  border-radius: 0;
-}
-
-.more-services .card {
-  border: 0;
-  text-align: ceneter;
-}
-
-.more-services .card-body {
-  -moz-text-align-last: center;
-  text-align-last: center;
-}
-
-.more-services .card-title a {
-  font-weight: 600;
-  font-size: 18px;
-  color: #334240;
-  transition: ease-in-out 0.3s;
-}
-
-.more-services .card-title a:hover {
-  color: #1bbca3;
-}
-
-.more-services .btn {
-  border-radius: 50px;
-  padding: 4px 30px 6px 30px;
-  border: 2px solid #1bbca3;
-}
-
-.more-services .btn:hover {
-  color: #fff;
-  background: #1bbca3;
 }
 
 /*--------------------------------------------------------------
@@ -865,7 +734,7 @@ section {
   background: #fff;
 }
 
-.portfolio .php-email-form button[type="submit"] {
+.portfolio .submit button[type="submit"] {
   background: #fff;
   border: 2px solid #1bbca3;
   padding: 10px 24px;
@@ -874,10 +743,44 @@ section {
   width: 200px;
 }
 
-.portfolio .php-email-form button[type="submit"]:hover {
+.portfolio .submit button[type="submit"]:hover {
   background: #1bbca3;
   color: #fff;
 }
+
+/*--------------------------------------------------------------
+# Payment Form
+--------------------------------------------------------------*/
+.payment .form-group{
+  position: relative;
+  box-shadow: 10px -5px 40px 0 rgba(0, 0, 0, 0.1);
+  padding: 30px 200px 30px 200px;
+  margin: 0 auto 35px auto;
+  background: #fff;
+}
+
+.payment .submit button[type="submit"] {
+  background: #fff;
+  border: 2px solid #1bbca3;
+  padding: 10px 24px;
+  color: #1bbca3;
+  transition: 0.4s;
+  width: 200px;
+}
+
+.payment .submit button[type="submit"]:hover {
+  background: #1bbca3;
+  color: #fff;
+}
+
+.payment h5{
+  text-align: center;
+}
+
+.payment h6{
+  text-align: center;
+}
+
 
 /*--------------------------------------------------------------
 # Footer
