@@ -43,7 +43,8 @@
     <div id="item-container" class="container">
         <h1 class="display-4">Menu</h1>
         <form id="itemForm">
-
+            <h3 id="header1"></h3>
+            <h3 id="header2"></h3>
         </form>
     </div>
     <!-- <div id="item-container" class="container">
@@ -93,15 +94,20 @@
                 } else {
                     console.log(items);
                     // for loop to setup all table rows with obtained order data
+                    header1.innerText= "Step 1:";
                     for (const item of items) {
                         if (item.type=="base"){
                             var input= document.createElement("input");
+                            input.id=item.itemid;
                             input.type="radio";
-                            input.name=item.itemid;
                             input.value=item.itemid;
-                            input.innerHTML=item.itemname;
+                            input.innerText=item.itemname;
                             $('#itemForm').append(input);
-                        } else {
+                        }
+                    }
+                    header2.innerText="Step 2:";
+                    for (const item of items) {
+                        if (item.type=="topping"){
                             var input=document.createElement("input");
                             input.type= "checkbox";
                             input.name=item.itemid;
@@ -109,6 +115,15 @@
                             $('#itemForm').append(input);
                         }
                     }
+                        //  else {
+                        //     header2.innerText= "Step 2:";
+                        //     var input=document.createElement("input");
+                        //     input.type= "checkbox";
+                        //     input.name=item.itemid;
+                        //     input.value= item.itemid;
+                        //     $('#itemForm').append(input);
+                        // }
+                    
 
                    
                     // var rows = "";
