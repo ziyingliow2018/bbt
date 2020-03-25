@@ -62,6 +62,30 @@ def find_by_orderid(orderid):
  
 #     return jsonify(order.json()), 201
 
- 
+# @app.route("/order/<string:orderid>", methods=['PUT'])
+# def update_order(orderid):
+#     return order.query.update(order).values(status = 'Completed').where(order.columns.orderid == orderid)
+#     # stmt = order.update().where(order.c.orderid== orderid).values(status = 'Completed')
+#     # return stmt
+
+
+@app.route("/order/<string:orderid>", methods=['PUT'])
+def update_status(orderid):
+    order_update = order.query.filter_by(orderid=orderid).first()
+    order_update.status = 'Completed'
+    db.session.commit()
+    
+    if (order_update):
+        # If the order is valid I return a msg --- ask your team decide 1
+        # return jsonify({"message":"Successfully updated order."}), 200
+
+        # if the order is valid i return the order. --- ask your team decide 1
+        return jsonify({"data":order_update.json()}), 200
+        
+    return jsonify({"message": "Order not found."}), 404
+
+
+
+
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
