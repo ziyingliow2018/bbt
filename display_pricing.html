@@ -94,13 +94,22 @@
                     console.log(items);
                     // for loop to setup all table rows with obtained order data
                     for (const item of items) {
-                        var input= document.createElement("input");
-                        input.type="radio";
-                        input.name=item.itemid;
-                        input.value=item.itemid;
-                        input.innerHTML=item.itemname;
-                        $('#itemForm').append(input);
+                        if (item.type=="base"){
+                            var input= document.createElement("input");
+                            input.type="radio";
+                            input.name=item.itemid;
+                            input.value=item.itemid;
+                            input.innerHTML=item.itemname;
+                            $('#itemForm').append(input);
+                        } else {
+                            var input=document.createElement("input");
+                            input.type= "checkbox";
+                            input.name=item.itemid;
+                            input.value= item.itemid;
+                            $('#itemForm').append(input);
+                        }
                     }
+
                    
                     // var rows = "";
                     // for (const item of items) {
