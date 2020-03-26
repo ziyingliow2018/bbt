@@ -18,14 +18,16 @@ class item(db.Model):
     itemid = db.Column(db.String(10), primary_key=True)
     itemname = db.Column(db.String(64), nullable=False)
     price = db.Column(db.Float(precision=2), nullable=False)
+    type = db.Column(db.String(20), nullable=False)
    
-    def __init__(self, itemid, itemname, price):
+    def __init__(self, itemid, itemname, price,type):
         self.itemid = itemid
         self.itemname = itemname
         self.price = price
+        self.type = type
  
     def json(self):
-        return {"itemid": self.itemid, "itemname": self.itemname, "price": self.price}
+        return {"itemid": self.itemid, "itemname": self.itemname, "price": self.price, "type":self.type}
 
 
 @app.route("/item")
