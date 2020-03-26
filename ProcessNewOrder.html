@@ -1,0 +1,50 @@
+<script>
+    // Helper function to display error message
+    function showError(message) {
+        // Display an error under the the predefined label with error as the id
+        $('#error').text(message);
+    }
+  
+    $("#orderidform").submit(async (event) => {
+        //Prevents screen from refreshing when submitting
+        event.preventDefault();
+  
+        var serviceURL = "http://127.0.0.1:5000/order/";
+        var homeURL = "http://127.0.0.1/bbt/";
+  
+        //Get form data 
+        var base = $('#base').val();
+        var topping = $('#topping').val();
+        print(base);
+        exit;
+      
+        // form the POST url which includes the dynamic isbnNumber
+        // serviceURL += isbnNumber;
+        try {
+            const response =
+                await fetch(
+                    serviceURL, {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ orderid: increment(orderid), base: base, topping:topping, price:price, status: "Incomplete" })
+                });
+            const data = await response.json();
+  
+            if (response.ok) {
+                // relocate to home page
+                window.location.replace(homeURL);
+                return false;
+            } else {
+                console.log(data);
+                showError(data.message);
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            showError
+                ("There is a problem adding this order, please try again later. " + error);
+  
+        } // error
+    });
+  </script>
+  </html>
