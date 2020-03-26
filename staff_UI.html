@@ -1,10 +1,33 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width">
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+      
+        <title>SMÖÖ CHÁ</title>
+        <meta content="" name="descriptison">
+        <meta content="" name="keywords">
+      
+        <!-- Favicons -->
+        <link href="assets/img/.png" rel="icon">
+      
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+      
+        <!-- CSS Files -->
+        <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+        <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+        <link href="assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+        <link href="assets/vendor/venobox/venobox.css" rel="stylesheet">
+      
+        <!--  Main CSS File -->
+        <link href="assets/css/style.css" rel="stylesheet">
+      
+        <!-- Optimal Internet Explorer compatibility -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
 
     <title>Bubble Tea Orders</title>
 
@@ -39,15 +62,26 @@
 </head>
 
 <body>
+    <!-- ======= Header ======= -->
+  <header id="header">
+    <div class="container d-flex">
+
+      <div class="logo mr-auto">
+        <h1 class="text-light"><span><img src='assets/img/bbt_logo.jpg' style="width:200px;height:150px;"></span></a></h1>
+      </div>
+
+    </div>
+  </header><!-- End Header -->
+  <br>
     <h3 align='center'>Can't find an order?</h3>
     <div class="wrapper">
-    <a 'center' id="searchOrderBtn" class="btn btn-primary" 
+    <center><a  id="searchOrderBtn" class="btn btn-primary" 
      href="search_order.html" >Search for a order</a>
-    </div>
+    </div></center>
 
     <br></br>
     <div id="main-container" class="container">
-        <h1 class="display-4">All Orders</h1>
+        <h1 class="display-4">Un-Prepared Drinks</h1>
         <table id="orderTable" class='table table-striped' border='1'>
             <thead class='thead-dark'>
                 <tr>
@@ -64,6 +98,7 @@
      
     </div>
     <script>
+      
         // Helper function to display error message
         function showError(message) {
             // Hide the table and button in the event of error
@@ -75,9 +110,13 @@
                 .append("<label>"+message+"</label>");
         }
     
+        $(document).ready( function (){
+            loadData();
+        });
+
         // anonymous async function 
         // - using await requires the function that calls it to be async
-        $(async() => {           
+        async function loadData(){        
             // Change serviceURL to your own
             var serviceURL = "http://127.0.0.1:5000/order";
     
@@ -97,15 +136,18 @@
                 } else {
                     // for loop to setup all table rows with obtained order data
                     var rows = "";
+                    $("td").remove();
                     for (const order of orders) {
                         if (order.status=="Incomplete") {
                             eachRow =
+                            
                                 "<td>" + order.orderid + "</td>" +
                                 "<td>" + order.base + "</td>" +
                                 "<td>" + order.toppings + "</td>" +
                                 "<td>" + order.totalprice + "</td>" +
                                 "<td>" + order.status + "</td>" +
-                                "<td> <input type= 'submit' name= 'update order' value = 'Update'></td>";
+                                "<td><button id='" + order.orderid + "' onclick='updateRecord(" + order.orderid+ ");'>Update</button></td>"
+                                // "<td><input type= 'submit' name= 'update order' value = 'Update'  onClick='window.location='page_name.html'' ></td>";
                             rows += "<tbody><tr>" + eachRow + "</tr></tbody>";
                         }
                     }
@@ -119,10 +161,64 @@
               ('There is a problem retrieving order data, please try again later.<br />'+error);
                
             } // error
-        });
-    </script>
+        };
+
+
+        //update !! // 
+
+        async function updateRecord(orderId){
+                // what is data? data is a local variable ... 
+                //var orders = data.orders; 
+                //for (const orders of order){
+                var serviceURL = "http://127.0.0.1:5000/order/" + orderId;
+
+                try {
+                    const response =
+                        await fetch(
+                            serviceURL, 
+                            { method: 'PUT' ,
+                            headers: { "Content-Type": "application/json" },
+                    
+
+                    });
+                    var data = await response.json();
+                    if (response.ok){
+                        console.log(data);
+                        loadData();
+                        // window.location.reload(true);
+                        // Show your OK message to the front-end
+                    }else{
+                            showError("Order not updated")
+                        }
+                    
+                } catch (error) {
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    showError
+                    ('There is a problem updating order data, please try again later.<br />'+error);
+                    
+                } // error
+
+            };
+
+    function showError(message) {
+        // Hide the table and button in the event of error
+        $('#submitUpdate').hide();
+
+        // Display an error under the main container
+    $('#submitUpdate')
+                .append("<label>"+message+"</label>");
+                                }
+
+
+
+</script>
+<!---->
+
+
+
+
+
+
     </body>
-    </html>
-    
-   
     </html>
