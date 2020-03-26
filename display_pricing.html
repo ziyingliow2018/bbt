@@ -36,18 +36,16 @@
     src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
     integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
     crossorigin="anonymous"></script>
+    <style>
+        .color{
+        color: #800000;
+        }
+    </style>
 </head>
 
 <body>
     <br></br>
     <div id="item-container" class="container">
-        <h1 class="display-4">Menu</h1>
-        <form id="itemForm">
-            <h3 id="header1"></h3>
-            <h3 id="header2"></h3>
-        </form>
-    </div>
-    <!-- <div id="item-container" class="container">
         <h1 class="display-4">Menu</h1>
         <table id="itemTable" class='table table-striped' border='1'>
             <thead class='thead-dark'>
@@ -57,8 +55,14 @@
                     <th>Price ($)</th>
                     </tr>
             </thead>
-        </table> -->
-        
+        </table>
+        <div id="formcontainer" class="container">
+            <!-- <h1 class="display-4">Menu</h1> -->
+            <form id="itemForm">
+                <h3 id="header1" class="color"></h3>
+                <h3 id="header2" class="color"></h3>
+            </form>
+        </div>
      
     </div>
     <script>
@@ -93,49 +97,58 @@
                     showError('Item list empty or undefined.')
                 } else {
                     console.log(items);
-                    // for loop to setup all table rows with obtained order data
-                    header1.innerText= "Step 1:";
+                    // for loop to setup all table rows with obtained order da
+                    var rows = "";
+                    for (const item of items) {
+                            eachRow =
+                            "<td>" + item.itemid + "</td>" +
+                            "<td>" + item.itemname + "</td>" +
+                            "<td>" + item.price + "</td>";
+                        rows += "<tbody><tr>" + eachRow + "</tr></tbody>";
+                    }
+                    // add all the rows to the table
+                    $('#itemTable').append(rows);
+
+                    header1.innerText= "Step 1: Choose Your Base: ";
+                    // header2.innerText="Step 2: Choose Your Toppings: ";
                     for (const item of items) {
                         if (item.type=="base"){
+                            var myDiv= document.getElementById("formcontainer");
                             var input= document.createElement("input");
-                            input.id=item.itemid;
                             input.type="radio";
+                            input.name=item.itemid;
                             input.value=item.itemid;
-                            input.innerText=item.itemname;
-                            $('#itemForm').append(input);
+                            var label= document.createElement('label');
+                            label.htmlFor='id';
+                            label.appendChild(document.createTextNode(item.itemname , '</br>'));
+                            myDiv.appendChild(input);
+                            myDiv.appendChild(label);
+                            // prints a new line
+                            var newElem = document.createElement("BR");
+                            myDiv.insertBefore(newElem,input);
                         }
                     }
-                    header2.innerText="Step 2:";
+                    var myDiv= document.getElementById("formcontainer");
+                    var header=document.getElementById("header2"); 
+                    var text=document.createTextNode("Step 2: Select Your Topping(s): ");
+                    header.appendChild(text);
+                    myDiv.appendChild(header);
                     for (const item of items) {
                         if (item.type=="topping"){
                             var input=document.createElement("input");
                             input.type= "checkbox";
                             input.name=item.itemid;
-                            input.value= item.itemid;
-                            $('#itemForm').append(input);
+                            input.value=item.itemid;
+                            var label= document.createElement('label');
+                            label.htmlFor='id';
+                            label.appendChild(document.createTextNode(item.itemname , '</br>'));
+                            myDiv.appendChild(input);
+                            myDiv.appendChild(label);
+                            //prints a new line
+                            var newElem = document.createElement("BR");
+                            myDiv.insertBefore(newElem,input);
                         }
                     }
-                        //  else {
-                        //     header2.innerText= "Step 2:";
-                        //     var input=document.createElement("input");
-                        //     input.type= "checkbox";
-                        //     input.name=item.itemid;
-                        //     input.value= item.itemid;
-                        //     $('#itemForm').append(input);
-                        // }
-                    
-
-                   
-                    // var rows = "";
-                    // for (const item of items) {
-                    //         eachRow =
-                    //         "<td>" + item.itemid + "</td>" +
-                    //         "<td>" + item.itemname + "</td>" +
-                    //         "<td>" + item.price + "</td>";
-                    //     rows += "<tbody><tr>" + eachRow + "</tr></tbody>";
-                    // }
-                    // // add all the rows to the table
-                    // $('#itemTable').append(rows);
                 }
             } catch (error) {
                 // Errors when calling the service; such as network error, 
@@ -146,64 +159,8 @@
             } // error
         });
     </script>
-    <!-- <script>
-        // Helper function to display error message
-        function showError(message) {
-            // Hide the table and button in the event of error
-            $('#itemTable').hide();
-            // $('#searchOrderBtn').hide();
-    
-            // Display an error under the main container
-            $('#item-container')
-                .append("<label>"+message+"</label>");
-        }
-    
-        // anonymous async function 
-        // - using await requires the function that calls it to be async
-        $(async() => {           
-            // Change serviceURL to your own
-            var serviceURL = "http://127.0.0.1:5000/item";
-    
-            try {
-                const response =
-                 await fetch(
-                   serviceURL, { method: 'GET' }
-                );
-                const data = await response.json();
-                var items = data.items; //the arr is in data.orders of the JSON data
-                
-
-                // array or array.length are false
-                if (!items || !items.length) {
-                    showError('Item list empty or undefined.')
-                } else {
-                    console.log(data);
-                    // for loop to setup all table rows with obtained order data
-                    var rows = "";
-                    for (const item of items) {
-                        eachRow =
-                            "<td>" + item.itemid + "</td>" +
-                            "<td>" + item.itemname + "</td>" +
-                            "<td>" + item.price + "</td>";
-                        rows += "<tbody><tr>" + eachRow + "</tr></tbody>";
-
-                      
-                    // add all the rows to the table
-                    $('#itemTable').append(rows);
-                    }
-                }
-
-            } catch (error) {
-                // Errors when calling the service; such as network error, 
-                // service offline, etc
-                showError
-              ('There is a problem retrieving order data, please try again later.<br />'+error);
-               
-            } // error
-        });
-    </script> -->
     </body>
-    </html>
-    
-   
+
+    <html>
+        <form><input type='submit' class="btn btn-primary" href="process_order.html"></form>
     </html>
