@@ -18,6 +18,8 @@
         var base = $('#base').val();
         var topping = $('#topping').val();
         var DateTime = datetime.now();
+        var price = $('totalprice'.val());
+        var status;
         print(base);
         exit;
       
@@ -29,7 +31,7 @@
                     serviceURL, {
                     method: 'POST',
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ orderid: increment(orderid), base: base, topping:topping, price:price, status: "Incomplete" })
+                    body: JSON.stringify({ orderid: increment(orderid), base: base, topping:topping, DateTime:DateTime, price:price, status: "Incomplete" })
                 });
             const data = await response.json();
   
