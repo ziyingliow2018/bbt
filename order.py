@@ -17,85 +17,111 @@ from flask_cors import CORS
 import pika
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/item'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/order'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 CORS(app)
+
+class order(db.Model):
+    __tablename__ = 'order'
+
+    orderid = db.Column(db.String(13), primary_key=True)
+    base = db.Column(db.String(100), nullable=False)
+    datetime = db.Column(db.Date, nullable=False)
+    toppings = db.Column(db.String(200), nullable=True)
+    totalprice = db.Column(db.Float(precision=2),nullable=False)
+    status = db.Column(db.String(20), nullable=False)
+
+    def __init__(orderid, base, datetime, toppings, totalPrice, status):
+        self.orderid = orderid
+        self.base = base
+        self.dateime = datetime
+        self.toppings = toppings
+        self.totalprice = totalprice
+        self.status = status
+
+    def json(self):
+        return {"orderid": self.orderid, "base": self.base, "datetime": self.datetime, "toppings":self.toppings, "totalprice":self.totalprice, "status":self.status}
+
+
+
 # If see errors like "ModuleNotFoundError: No module named 'pika'", need to
 # make sure the 'pip' version used to install 'pika' matches the python version used.
-import mysql.connector
+# import mysql.connector
 
-db = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  passwd="",
-  database="bubbletea"
-)
+# mydb = mysql.connector.connect(
+#   host='localhost',
+#   user='root',
+#   passwd='',
+#   database='bubbletea'
+# )
 
-mycursor = mydb.cursor()
+# mycursor = mydb.cursor()
 
-mycursor.execute("SELECT * FROM order")
+# sql = 'SELECT * FROM order'
 
-try:
-    orders = mycursor.fetchall()
+# try:
+#     curser.execute(sql)
+#     results = mycursor.fetchall()
 
-    orders = []
-    for row in orders:
-        orderid = row[0]
-        base = row[1]
-        datetime = row[2]
-        toppings = row[3]
-        totalprice = row[4]
-        status = row[5]
-        order = [orderid, base, datetime, toppings, totalprice, status]
-        orders.append(order)
-except:
-    print("Unable to fetch data")
-db.close()
+#     orders = []
 
-class Order:
-    # Load existing orders from a JSON file (for simplicity here). In reality, orders will be stored in DB. 
-    with open('orders.json') as order_json_file:
-        orders = json.load(order_json_file)
-    order_json_file.close()
+#     for row in results:
+#         orderid = row[0]
+#         base = row[1]
+#         datetime = row[2]
+#         toppings = row[3]
+#         totalprice = row[4]
+#         status = row[5]
+#         order = [orderid, base, datetime, toppings, totalprice, status]
+#         orders.append(order)
+# except:
+#     print("Unable to fetch data")
+# mydb.close()
 
-    # Find the max of all existing "order_id" to be used as the last order_id; if in actual DB, the uniqueness of "order_id" will be managed by DBMS
-    last_order_id = max([ o["order_id"] for o in orders["orders"] ])
+# class Order:
+#     # Load existing orders from a JSON file (for simplicity here). In reality, orders will be stored in DB. 
+#     with open('orders.json') as order_json_file:
+#         orders = json.load(order_json_file)
+#     order_json_file.close()
 
-def orders_json():
-    """return all orders as a JSON object (not a string)"""
-    return Order.orders
+#     # Find the max of all existing "order_id" to be used as the last order_id; if in actual DB, the uniqueness of "order_id" will be managed by DBMS
+#     last_order_id = max([ o["order_id"] for o in orders["orders"] ])
+
+# def orders_json():
+#     """return all orders as a JSON object (not a string)"""
+#     return Order.orders
     
-def orders_save(orders_file):
-    """ save all orders to a file"""
-    with open(orders_file, 'w') as order_json_outfile:
-        json.dump(Order.orders, order_json_outfile, indent=2, default=str) # convert a JSON object to a string
-    order_json_outfile.close()
+# def orders_save(orders_file):
+#     """ save all orders to a file"""
+#     with open(orders_file, 'w') as order_json_outfile:
+#         json.dump(Order.orders, order_json_outfile, indent=2, default=str) # convert a JSON object to a string
+#     order_json_outfile.close()
 
-class Order_Item:
-    def __init__(self):
-        self.OrderID = 0
-        # self.CustomerID = 0
-        self.Datetime = 0
-        self.Base = ''
-        self.Toppings = ''
-        self.TotalPrice = ''
-        self.Status = ''
+# class Order_Item:
+#     def __init__(self):
+#         self.OrderID = 0
+#         # self.CustomerID = 0
+#         self.Datetime = 0
+#         self.Base = ''
+#         self.Toppings = ''
+#         self.TotalPrice = ''
+#         self.Status = ''
 
-    # return an order item as a JSON object
-    def json(self):
-        return {'OrderID': self.OrderID, 'Datetime': self.Datetime, 'Base': self.Base, 'Toppings': self.Toppings, 'TotalPrice': self.TotalPrice,'Status': self.Status}
+#     # return an order item as a JSON object
+#     def json(self):
+#         return {'OrderID': self.OrderID, 'Datetime': self.Datetime, 'Base': self.Base, 'Toppings': self.Toppings, 'TotalPrice': self.TotalPrice,'Status': self.Status}
 
  
-#@app.route("/orders")
-def get_all():
+@app.route("/order")
+def get_all_orders():
     """Return all orders as a JSON object"""
-    return Order.orders
+    return jsonify({"orders": [order.json() for order in order.query.all()]})
  
 def find_by_order_id(OrderID):
     """Return an order (orders) of the order_id"""
-    order = [ o for o in Order.orders["orders"] if o["OrderID"]==OrderID ]
+    order = [ o for o in order.order["order"] if o["OrderID"]==OrderID ]
     if len(order)==1:
         return order[0]
     elif len(order)>1:
@@ -189,26 +215,33 @@ def send_order(order):
         #  i.e., if the monitoring is offline or the broker cannot match the routing key for the message, the message is lost.
         # If need durability of a message, need to declare the queue in the sender (see sample code below).
 
-    if "status" in order: # if some error happened in order creation
-        # inform Error handler
-        print("There has been an error.".format(order["status"]))
-    else: # inform Notification and exit
+    # if "status" in order: # if some error happened in order creation
+    #     # inform Error handler
+    #     print("There has been an error.")
+    # else: 
+    # inform Notification and exit
         # prepare the channel and send a message to Monitoring
-        channel.queue_declare(queue='notification', durable=True) # make sure the queue used by Shipping exist and durable
-        channel.queue_bind(exchange=exchangename, queue='notification', routing_key='notification.info') # make sure the queue is bound to the exchange
-        channel.basic_publish(exchange=exchangename, routing_key="notification.info", body=message,
-            properties=pika.BasicProperties(delivery_mode = 2, # make message persistent within the matching queues until it is received by some receiver (the matching queues have to exist and be durable and bound to the exchange, which are ensured by the previous two api calls)
-            )
+    channel.queue_declare(queue='notification', durable=True) # make sure the queue used by Shipping exist and durable
+    channel.queue_bind(exchange=exchangename, queue='notification', routing_key='notification.info') # make sure the queue is bound to the exchange
+    channel.basic_publish(exchange=exchangename, routing_key="notification.info", body=message,
+        properties=pika.BasicProperties(delivery_mode = 2, # make message persistent within the matching queues until it is received by some receiver (the matching queues have to exist and be durable and bound to the exchange, which are ensured by the previous two api calls)
         )
-        print("Order sent to notfication.")
+    )
+    print("Order sent to notfication.")
     # close the connection to the broker
     connection.close()
+
+#var orders = object()
+orders = get_all_orders
+serviceURL= "http://127.0.0.1:5000/order"
+
+
 
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
     print("This is " + os.path.basename(__file__) + ": creating an order...")
     # order = create_order("sample_order.txt")
-    send_order(order)
+    send_order(orders)
 #    print(get_all())
 #    print(find_by_order_id(3))
