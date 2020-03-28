@@ -85,10 +85,9 @@
                     <tr>
                         <th>OrderID</th>
                         <th>Base</th>
-                        <th>Topping(s)</th>
+                        <th>Topping</th>
                         <th>Price</th>
                         <th>Status</th>
-                        <th>Update Status</th>
                     </tr>
                 </thead>
             </table>
@@ -108,60 +107,6 @@
                 .append("<label>"+message+"</label>");
         }
 
-    // $(function () {
-
-    //     //This is considered an event call
-    //     //It listens to the isbnForm <form id="isbnForm">
-    //     //When submitted button is clicked it perform a series of actions through a function
-    //     $("#isbnform").submit(async (event) => {
-    //         //Prevents screen from refreshing when submitting as we are not going to another page
-    //         event.preventDefault();
-
-    //         $("#error").hide();
-
-    //         //Get ISBN Number from the form
-    //         var orderid = $('#orderid').val()
-    //         var serviceURL = "http://127.0.0.1:5000/order" + "/" + orderid;
-
-    //         try {
-    //             const response =
-    //                 await fetch(
-    //                     serviceURL, { method: 'GET', mode:'cors' }
-    //                 );
-    //             console.log(data)
-    //             const data = await response.json();
-    //             if (response.ok) {
-    //                 foundOrder =
-    //                     "<tbody>" +
-    //                     "<tr>" +
-    //                     "<td>" + data.orderid + "</td>" +
-    //                     "<td>" + data.base + "</td>" +
-    //                     "<td>" + data.toppings + "</td>" +
-    //                     "<td>" + data.totalprice + "</td>" +
-    //                     "<td>" + data.status + "</td>";
-    //                     if (order.status == "Incomplete"){
-    //                     "<td> <input type= 'submit' name= 'update order' value = 'Update'></td>";
-    //                     } else {
-    //                         "<td></td>";
-    //                     } 
-    //                     "</tr>" +
-    //                     "<tbody>";
-    //                 // $('#message').hide();
-    //                 // $('#booksTable tbody').empty();
-    //                 $('#SingleOrderTable').append(foundOrder);
-    //             } else {
-    //                 showError("Order data not found.");
-    //             }
-
-    //         } catch (error) {
-    //             // Errors when calling the service; such as network error, 
-    //             // service offline, etc
-    //             showError
-    //                 ('There is a problem retrieving books data, please try again later.<br />' + error);
-
-    //         }
-    //     })
-    // });
 
     $("#isbnform").submit(async (event) => {
 
@@ -191,16 +136,14 @@
                         "<td>" + order.base + "</td>" +
                         "<td>" + order.toppings + "</td>" +
                         "<td>" + order.totalprice + "</td>" +
-                        "<td>" + order.status + "</td>" +
-                        "<td> <input type= 'submit' name= 'update order' value = 'Update'></td>";
+                        "<td>" + order.status + "</td>";
                 } else {
                     eachRow =
                         "<td>" + order.orderid + "</td>"  +
                         "<td>" + order.base + "</td>" +
                         "<td>" + order.toppings + "</td>" +
                         "<td>" + order.totalprice + "</td>" +
-                        "<td>" + order.status + "</td>" +
-                        "<td>Order is complete </td>";
+                        "<td>" + order.status + "</td>";
                 }
                 $('#SingleOrderTable').append(eachRow);
             } else {
