@@ -46,27 +46,21 @@ def find_by_orderid(orderid):
     return jsonify({"message": "Order not found."}), 404
 
 
-# @app.route("/order/<string:orderid>", methods=['POST'])
-# def create_order(orderid):
-#     if (order.query.filter_by(orderid=orderid).first()):
-#         return jsonify({"message": "A order with '{}' already exists.".format(orderid)}), 400
+@app.route("/order/<string:orderid>", methods=['POST'])
+def create_order(orderid):
+    if (order.query.filter_by(orderid=orderid).first()):
+        return jsonify({"message": "A order with orderid '{}' already exists.".format(orderid)}), 400
  
-#     data = request.get_json()
-#     order = order(orderid, **data)
+    data = request.get_json()
+    order = order(orderid, **data)
  
-#     try:
-#         db.session.add(order)
-#         db.session.commit()
-#     except:
-#         return jsonify({"message": "An error occurred creating the order."}), 500
+    try:
+        db.session.add(order)
+        db.session.commit()
+    except:
+        return jsonify({"message": "An error occurred creating the book."}), 500
  
-#     return jsonify(order.json()), 201
-
-# @app.route("/order/<string:orderid>", methods=['PUT'])
-# def update_order(orderid):
-#     return order.query.update(order).values(status = 'Completed').where(order.columns.orderid == orderid)
-#     # stmt = order.update().where(order.c.orderid== orderid).values(status = 'Completed')
-#     # return stmt
+    return jsonify(order.json()), 201
 
 
 @app.route("/order/<string:orderid>", methods=['PUT'])
