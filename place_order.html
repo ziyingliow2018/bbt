@@ -84,7 +84,6 @@
         <table id="itemTable" class='table table-striped' border='1'>
             <thead class='thead-dark'>
                 <tr>
-                    <th>ItemID</th>
                     <th>Item Name</th>
                     <th>Price ($)</th>
                     </tr>
@@ -149,7 +148,6 @@
                     for (const item of items) {
                        
                         eachRow =   
-                            "<td>" + item.itemid + "</td>" +
                             "<td>" + item.itemname + "</td>" +
                             "<td>" + item.price + "</td>"
                         rows += "<tbody><tr>" + eachRow + "</tr></tbody>";
@@ -228,7 +226,7 @@
         //Prevents screen from refreshing when submitting
         event.preventDefault();
 
-        var serviceURL = "http://127.0.0.1:5000/order";
+        var serviceURL = "http://127.0.0.1:5000/order/";
         var homeURL = "index.html";
         
         //Get form data 
@@ -236,34 +234,34 @@
         // var isbnNumber = $('#isbn13').val();
         // var price = parseFloat($('#price').val());
         // var availability = parseInt($("#availability").val());
-        var base_object= $('#base').val();
-        // console.log(base_object);
-        for (i=0; i <base_object.length;i++){
-            if(base_object[i].checked)
-                var base= base_object[i].value;
-        }
-        var topping_object= $('#topping').val();
-        for (i=0; i <topping_object.length;i++){
-            if(topping_object[i].checked)
-                var topping= topping_object[i].value;
-        }
-        var DateTime = new Date();
+        // var base_object= $('#base').val();
+        // // console.log(base_object);
+        // for (i=0; i <base_object.length;i++){
+        //     if(base_object[i].checked)
+        //         var base= base_object[i].value;
+        // }
+        // var topping_object= $('#topping').val();
+        // for (i=0; i <topping_object.length;i++){
+        //     if(topping_object[i].selected)
+        //         var topping= topping_object[i].value;
+        // }
+        var base;
+        var topping;
         var price;
         var status;
 
         // form the POST url which includes the dynamic isbnNumber
-        // serviceURL += isbnNumber;
+        serviceURL += '16';
         try {
             const response =
                 await fetch(
                     serviceURL, {
                     method: 'POST',
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ orderid: '100',base: base, topping:topping, DateTime:DateTime, price:"3", status: "Incomplete" })
+                    body: JSON.stringify({ base: "black tea", topping:"cheese",  price:"3.8", status: "Incomplete" })
                 });
             const data = await response.json();
-            response.AppendHeader("Access-Control-Allow-Origin", "*");
-            
+
             if (response.ok) {
                 // relocate to home page
                 window.location.replace(homeURL);
