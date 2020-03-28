@@ -10,7 +10,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
  
-class order(db.Model):
+class Order(db.Model):
     __tablename__ = 'order'
  
     orderid = db.Column(db.String(13), primary_key=True)
@@ -35,12 +35,12 @@ class order(db.Model):
  
 @app.route("/order")
 def get_all():
-    return jsonify({"orders": [order.json() for order in order.query.all()]})
+    return jsonify({"orders": [order.json() for order in Order.query.all()]})
  
  
 @app.route("/order/<string:orderid>")
 def find_by_orderid(orderid):
-    single_order = order.query.filter_by(orderid=orderid).first()
+    single_order = Order.query.filter_by(orderid=orderid).first()
     if order:
         return jsonify(single_order.json())
     return jsonify({"message": "Order not found."}), 404
@@ -48,7 +48,7 @@ def find_by_orderid(orderid):
 
 @app.route("/order/<string:orderid>", methods=['POST'])
 def create_order(orderid):
-    if (order.query.filter_by(orderid=orderid).first()):
+    if (Order.query.filter_by(orderid=orderid).first()):
         return jsonify({"message": "A order with orderid '{}' already exists.".format(orderid)}), 400
  
     data = request.get_json()
@@ -58,14 +58,14 @@ def create_order(orderid):
         db.session.add(order)
         db.session.commit()
     except:
-        return jsonify({"message": "An error occurred creating the book."}), 500
+        return jsonify({"message": "An error occurred creating the order."}), 500
  
     return jsonify(order.json()), 201
 
 
 @app.route("/order/<string:orderid>", methods=['PUT'])
 def update_status(orderid):
-    order_update = order.query.filter_by(orderid=orderid).first()
+    order_update = Order.query.filter_by(orderid=orderid).first()
     order_update.status = 'Completed'
     db.session.commit()
     
