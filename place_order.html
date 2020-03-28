@@ -1,12 +1,35 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width">
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+      
+        <title>SMÖÖ CHÁ</title>
+        <meta content="" name="descriptison">
+        <meta content="" name="keywords">
+      
+        <!-- Favicons -->
+        <!-- <link href="assets/img/.png" rel="icon"> -->
+      
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+      
+        <!-- CSS Files -->
+        <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+        <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+        <link href="assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+        <link href="assets/vendor/venobox/venobox.css" rel="stylesheet">
+      
+        <!--  Main CSS File -->
+        <link href="assets/css/style.css" rel="stylesheet">
+      
+        <!-- Optimal Internet Explorer compatibility -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
 
-    <title>Bubble Tea Orders</title>
+    <title>Bubble Tea Menu</title>
 
     <link rel="stylesheet" href="">
     <!--[if lt IE 9]>
@@ -44,6 +67,18 @@
 </head>
 
 <body>
+    <!-- ======= Header ======= -->
+  <header id="header">
+    <div class="container d-flex">
+
+      <div class="logo mr-auto">
+        <h1 class="text-light"><span><img src='assets/img/bbt_logo.jpg' style="width:200px;height:150px;"></span></a></h1>
+      </div>
+
+    </div>
+  </header><!-- End Header -->
+  <br>
+
     <br></br>
     <div id="item-container" class="container">
         <h1 class="display-4">Menu</h1>
@@ -51,25 +86,25 @@
             <thead class='thead-dark'>
                 <tr>
                     <th>ItemID</th>
-                    <th>ItemName</th>
+                    <th>Item Name</th>
                     <th>Price ($)</th>
                     </tr>
             </thead>
         </table>
-        <div id="formcontainer" class="container">
-            <!-- <h1 class="display-4">Menu</h1> -->
-            <form id="itemForm">
-                <h3 id="header1" class="color"></h3>
-                <h3 id="header2" class="color"></h3>
-            </form>
-        </div>
-     
+    </div>
+    <div id="formcontainer" class="container">
+        <!-- <h1 class="display-4">Menu</h1> -->
+        <form id="itemForm">
+            <h3 id="header1" class="color"></h3>
+            <h3 id="header2" class="color"></h3>
+        </form>
     </div>
     <script>
+      
         // Helper function to display error message
         function showError(message) {
             // Hide the table and button in the event of error
-            $('#itemForm').hide();
+            $('#itemTable').hide();
             // $('#searchOrderBtn').hide();
     
             // Display an error under the main container
@@ -77,44 +112,47 @@
                 .append("<label>"+message+"</label>");
         }
     
+        $(document).ready( function (){
+            loadData();
+        });
+
         // anonymous async function 
         // - using await requires the function that calls it to be async
-        $(async() => {           
+        async function loadData(){        
             // Change serviceURL to your own
-            var serviceURL = "http://127.0.0.1:5000/item";
-
+            var serviceURL = "http://localhost:5000/item";
+    
             try {
                 const response =
                  await fetch(
-                   serviceURL, { method: 'GET' }
+                   serviceURL, { method: 'GET'}
                 );
                 const data = await response.json();
                 var items = data.items; //the arr is in data.orders of the JSON data
-                
+                console.log(items);
                 
                 // array or array.length are false
                 if (!items || !items.length) {
+                    console.log(data);
                     showError('Item list empty or undefined.')
                 } else {
-                    console.log(items);
-                    // for loop to setup all table rows with obtained order da
+                    // for loop to setup all table rows with obtained order data
                     var rows = "";
-                    for (const item of items) {
-                            eachRow =
-                            "<td>" + item.itemid + "</td>" +
-                            "<td>" + item.itemname + "</td>" +
-                            "<td>" + item.price + "</td>";
-                        rows += "<tbody><tr>" + eachRow + "</tr></tbody>";
-                    }
-                    // add all the rows to the table
-                    $('#itemTable').append(rows);
+                    $("td").remove();
 
                     header1.innerText= "Step 1: Choose Your Base: ";
-                    // header2.innerText="Step 2: Choose Your Toppings: ";
                     for (const item of items) {
+                       
+                        eachRow =   
+                            "<td>" + item.itemid + "</td>" +
+                            "<td>" + item.itemname + "</td>" +
+                            "<td>" + item.price + "</td>"
+                        rows += "<tbody><tr>" + eachRow + "</tr></tbody>";
+
                         if (item.type=="base"){
                             var myDiv= document.getElementById("formcontainer");
                             var input= document.createElement("input");
+                            input.id="base";
                             input.type="radio";
                             input.name=item.itemid;
                             input.value=item.itemid;
@@ -128,6 +166,10 @@
                             myDiv.insertBefore(newElem,input);
                         }
                     }
+                    // add all the rows to the table
+                    $('#itemTable').append(rows);
+
+
                     var myDiv= document.getElementById("formcontainer");
                     var header=document.getElementById("header2"); 
                     var text=document.createTextNode("Step 2: Select Your Topping(s): ");
@@ -157,11 +199,18 @@
               ('There is a problem retrieving item data, please try again later.<br />'+error);
                
             } // error
-        });
-    </script>
-    </body>
+        };
 
-    <html>
-        <button class="btn btn-primary" href="ProcessNewOrder.html">Submit</button>
-        <button class="btn btn-primary" href="index.html">Back</button>
+</script>
+<!---->
+    </body>
     </html>
+
+<html>
+    <div class="wrapper">
+        <center><a  id="searchOrderBtn" class="btn btn-primary" 
+        href="ProcessNewOrder.html" >Submit</a>
+        <a  id="searchOrderBtn" class="btn btn-primary" 
+        href="index.html" >Back</a>
+        </div></center>
+</html>
