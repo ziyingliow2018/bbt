@@ -15,21 +15,21 @@ class Order(db.Model):
  
     orderid = db.Column(db.String(13), primary_key=True)
     base = db.Column(db.String(100), nullable=False)
-    datetime = db.Column(db.Date, nullable=False)
+    # datetime = db.Column(db.TimeStamp, nullable=False)
     toppings = db.Column(db.String(200), nullable=False)
     totalprice = db.Column(db.Float(precision=2), nullable=False)
     status = db.Column(db.String(15), nullable=False)
  
-    def __init__(self, orderid, base, datetime, toppings, totalprice, status):
+    def __init__(self, orderid, base, toppings, totalprice, status):
         self.orderid = orderid
         self.base = base
-        self.datetime = datetime
+        # self.datetime = datetime
         self.toppings = toppings
         self.totalprice = totalprice
         self.status = status
  
     def json(self):
-        return {"orderid": self.orderid, "base": self.base, "datetime": self.datetime, 
+        return {"orderid": self.orderid, "base": self.base, 
         "toppings": self.toppings,"totalprice": self.totalprice, "status": self.status}
  
  
@@ -40,9 +40,9 @@ def get_all():
  
 @app.route("/order/<string:orderid>")
 def find_by_orderid(orderid):
-    single_order = Order.query.filter_by(orderid=orderid).first()
+    order = Order.query.filter_by(orderid=orderid).first()
     if order:
-        return jsonify(single_order.json())
+        return jsonify(order.json())
     return jsonify({"message": "Order not found."}), 404
 
 
@@ -52,7 +52,7 @@ def create_order(orderid):
         return jsonify({"message": "A order with orderid '{}' already exists.".format(orderid)}), 400
  
     data = request.get_json()
-    order = order(orderid, **data)
+    order = Order(orderid, **data)
  
     try:
         db.session.add(order)
