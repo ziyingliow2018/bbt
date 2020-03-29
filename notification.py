@@ -6,10 +6,46 @@ import json
 import sys
 import os
 import random
-
-# Communication patterns:
-# Use a message-broker with 'direct' exchange to enable interaction
+# from flask import Flask, request, jsonify
+# from flask_sqlalchemy import SQLAlchemy
+# from flask_cors import CORS
+# from sqlalchemy import Date
 import pika
+# import telegram
+
+
+# global TOKEN
+# TOKEN = '1010659472:AAHL0PoXGBMKB8-mHY8YDPitOTC6U7j0kwk'
+
+# app = Flask(__name__)
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/bubbletea'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# db = SQLAlchemy(app)
+# CORS(app)
+ 
+# class Order(db.Model):
+#     __tablename__ = 'order'
+ 
+#     orderid = db.Column(db.String(13), primary_key=True)
+#     base = db.Column(db.String(100), nullable=False)
+#     # datetime = db.Column(db.TimeStamp, nullable=False)
+#     toppings = db.Column(db.String(200), nullable=False)
+#     totalprice = db.Column(db.Float(precision=2), nullable=False)
+#     status = db.Column(db.String(15), nullable=False)
+ 
+#     def __init__(self, orderid, base, toppings, totalprice, status):
+#         self.orderid = orderid
+#         self.base = base
+#         # self.datetime = datetime
+#         self.toppings = toppings
+#         self.totalprice = totalprice
+#         self.status = status
+ 
+#     def json(self):
+#         return {"orderid": self.orderid, "base": self.base, 
+#         "toppings": self.toppings,"totalprice": self.totalprice, "status": self.status}
+ 
 
 hostname = "localhost" # default hostname
 port = 5672 # default port
@@ -41,26 +77,7 @@ def callback(channel, method, properties, body): # required signature for the ca
     print() # print a new line feed to the previous json dump
     print() # print another new line as a separator
 
-    # prepare the reply message and send it out
-#    replymessage = json.dumps(result, default=str) # convert the JSON object to a string
- #   replyqueuename="shipping.reply"
-    # A general note about AMQP queues: If a queue or an exchange doesn't exist before a message is sent,
-    # - the broker by default silently drops the message;
-    # - So, if really need a 'durable' message that can survive broker restarts, need to
-    #  + declare the exchange before sending a message, and
-    #  + declare the 'durable' queue and bind it to the exchange before sending a message, and
-    #  + send the message with a persistent mode (delivery_mode=2).
-#    channel.queue_declare(queue=replyqueuename, durable=True) # make sure the queue used for "reply_to" is durable for reply messages
- #   channel.queue_bind(exchange=exchangename, queue=replyqueuename, routing_key=replyqueuename) # make sure the reply_to queue is bound to the exchange
-  #  channel.basic_publish(exchange=exchangename,
-      #      routing_key=properties.reply_to, # use the reply queue set in the request message as the routing key for reply messages
-     #       body=replymessage, 
-    #        properties=pika.BasicProperties(delivery_mode = 2, # make message persistent (stored to disk, not just memory) within the matching queues; default is 1 (only store in memory)
-   #             correlation_id = properties.correlation_id, # use the correlation id set in the request message
-            #)
-   # )
-   # channel.basic_ack(delivery_tag=method.delivery_tag) # acknowledge to the broker that the processing of the request message is completed
-
+   
 def processOrder(order):
     print("Processing an order:")
     print(order)
@@ -83,6 +100,18 @@ def send_error(resultmessage):
         properties=pika.BasicProperties(delivery_mode = 2) # make message persistent within the matching queues until it is received by some receiver (the matching queues have to exist and be durable and bound to the exchange)
     )
 
+
+
+# @app.route('/{}'.format(TOKEN), methods=['POST'])
+# def send_telegram(orderid):
+#     send_text = 'https://api.telegram.org/bot1010659472:AAHL0PoXGBMKB8-mHY8YDPitOTC6U7j0kwk/sendMessage?chat_id=-438700758&text=' + 'Order ID' + orderid +'is+ready+for+collection!'
+#     response = requests.post(send_text)
+#     return response.json()
+
+
+
+
 if __name__ == "__main__":  # execute this program only if it is run as a script (not by 'import')
     print("This is " + os.path.basename(__file__) + ": shipping for an order...")
+    app.run(threaded=True)
     receiveOrder()

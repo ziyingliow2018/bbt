@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy import Date
+import requests
+import telebot
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/bubbletea'
@@ -75,6 +78,14 @@ def update_status(orderid):
 
         # if the order is valid i return the order. --- ask your team decide 1
         return jsonify({"data":order_update.json()}), 200
+        token = '1010659472:AAHL0PoXGBMKB8-mHY8YDPitOTC6U7j0kwk'
+        chat_id = '-438700758'
+        # send_text_url = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text=Order+is+ready+for+collection!'
+        send_text_url = 'https://api.telegram.org/bot1010659472:AAHL0PoXGBMKB8-mHY8YDPitOTC6U7j0kwk/sendMessage?chat_id=-438700758&text=order+is+ready+for+collection!'
+        return requests.post(send_text_url)
+        # bot.send_message(chat_id, msg)
+        # send_text = 'https://api.telegram.org/bot1010659472:AAHL0PoXGBMKB8-mHY8YDPitOTC6U7j0kwk/sendMessage?chat_id=-438700758&text=' + 'Order ID' + orderid +'is+ready+for+collection!'
+        # response = requests.post(send_text)
         
     return jsonify({"message": "Order not found."}), 404
 
