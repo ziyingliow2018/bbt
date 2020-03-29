@@ -11,10 +11,14 @@ import datetime
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+import requests
 
 # Communication patterns:
 # Use a message-broker with 'direct' exchange to enable interaction
 import pika
+import mysql.connector
+
+StaffUIURL = "http://localhost:5002/staff_UI"
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/order'
@@ -23,71 +27,61 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
 
-class order(db.Model):
-    __tablename__ = 'order'
+mydb = mysql.connector.connect(
+  host='localhost',
+  user='root',
+  passwd='',
+  database='bubbletea'
+)
 
-    orderid = db.Column(db.String(13), primary_key=True)
-    base = db.Column(db.String(100), nullable=False)
-    datetime = db.Column(db.Date, nullable=False)
-    toppings = db.Column(db.String(200), nullable=True)
-    totalprice = db.Column(db.Float(precision=2),nullable=False)
-    status = db.Column(db.String(20), nullable=False)
+mycursor = mydb.cursor()
 
-    def __init__(orderid, base, datetime, toppings, totalPrice, status):
-        self.orderid = orderid
-        self.base = base
-        self.dateime = datetime
-        self.toppings = toppings
-        self.totalprice = totalprice
-        self.status = status
+sql = 'SELECT * FROM order'
 
-    def json(self):
-        return {"orderid": self.orderid, "base": self.base, "datetime": self.datetime, "toppings":self.toppings, "totalprice":self.totalprice, "status":self.status}
+try:
+    curser.execute(sql)
+    results = mycursor.fetchall()
 
+    orders = []
 
+    for row in results:
+        orderid = row[0]
+        base = row[1]
+        datetime = row[2]
+        toppings = row[3]
+        totalprice = row[4]
+        status = row[5]
+        order = [orderid, base, datetime, toppings, totalprice, status]
+        orders.append(order)
 
-# If see errors like "ModuleNotFoundError: No module named 'pika'", need to
-# make sure the 'pip' version used to install 'pika' matches the python version used.
-# import mysql.connector
+    return results
+except:
+    print("Unable to fetch data")
+mydb.close()
 
-# mydb = mysql.connector.connect(
-#   host='localhost',
-#   user='root',
-#   passwd='',
-#   database='bubbletea'
-# )
+# class Order(db.Model):
+#     __tablename__ = 'order'
 
-# mycursor = mydb.cursor()
+#     orderid = db.Column(db.String(13), primary_key=True)
+#     base = db.Column(db.String(100), nullable=False)
+#     datetime = db.Column(db.Date, nullable=False)
+#     toppings = db.Column(db.String(200), nullable=True)
+#     totalprice = db.Column(db.Float(precision=2),nullable=False)
+#     status = db.Column(db.String(20), nullable=False)
 
-# sql = 'SELECT * FROM order'
+#     def __init__(orderid, base, datetime, toppings, totalprice, status):
+#         self.orderid = orderid
+#         self.base = base
+#         self.dateime = datetime
+#         self.toppings = toppings
+#         self.totalprice = totalprice
+#         self.status = status
 
-# try:
-#     curser.execute(sql)
-#     results = mycursor.fetchall()
+#     def json(self):
+#         return {"orderid": self.orderid, "base": self.base, "datetime": self.datetime, "toppings":self.toppings, "totalprice":self.totalprice, "status":self.status}
 
-#     orders = []
-
-#     for row in results:
-#         orderid = row[0]
-#         base = row[1]
-#         datetime = row[2]
-#         toppings = row[3]
-#         totalprice = row[4]
-#         status = row[5]
-#         order = [orderid, base, datetime, toppings, totalprice, status]
-#         orders.append(order)
-# except:
-#     print("Unable to fetch data")
-# mydb.close()
-
-# class Order:
-#     # Load existing orders from a JSON file (for simplicity here). In reality, orders will be stored in DB. 
-#     with open('orders.json') as order_json_file:
-#         orders = json.load(order_json_file)
-#     order_json_file.close()
-
-#     # Find the max of all existing "order_id" to be used as the last order_id; if in actual DB, the uniqueness of "order_id" will be managed by DBMS
-#     last_order_id = max([ o["order_id"] for o in orders["orders"] ])
+# def get_all_orders():
+#     return jsonify({"orders": [order.json() for order in order.query.all()]})
 
 # def orders_json():
 #     """return all orders as a JSON object (not a string)"""
@@ -99,99 +93,85 @@ class order(db.Model):
 #         json.dump(Order.orders, order_json_outfile, indent=2, default=str) # convert a JSON object to a string
 #     order_json_outfile.close()
 
-# class Order_Item:
-#     def __init__(self):
-#         self.OrderID = 0
-#         # self.CustomerID = 0
-#         self.Datetime = 0
-#         self.Base = ''
-#         self.Toppings = ''
-#         self.TotalPrice = ''
-#         self.Status = ''
-
-#     # return an order item as a JSON object
-#     def json(self):
-#         return {'OrderID': self.OrderID, 'Datetime': self.Datetime, 'Base': self.Base, 'Toppings': self.Toppings, 'TotalPrice': self.TotalPrice,'Status': self.Status}
-
+# def find_by_order_id(order_id):
+#     """Return an order (orders) of the order_id"""
+#     order = [ o for o in Order.orders["orders"] if o["order_id"]==order_id ]
+#     if len(order)==1:
+#         return order[0]
+#     elif len(order)>1:
+#         return {'message': 'Multiple orders found for id ' + str(order_id), 'orders': order}
+#     else:
+#         return {'message': 'Order not found for id ' + str(order_id)}
  
-@app.route("/order")
-def get_all_orders():
-    """Return all orders as a JSON object"""
-    return jsonify({"orders": [order.json() for order in order.query.all()]})
- 
-def find_by_order_id(OrderID):
-    """Return an order (orders) of the order_id"""
-    order = [ o for o in order.order["order"] if o["OrderID"]==OrderID ]
-    if len(order)==1:
-        return order[0]
-    elif len(order)>1:
-        return {'message': 'Multiple orders found for id ' + str(OrderID), 'orders': order}
-    else:
-        return {'message': 'Order not found for id ' + str(OrderID)}
+def create_order(order_input):
+    """Create a new order according to the order_input"""
+    # assume status==200 indicates success
+    status = 200
+    message = "Success"
 
-# def create_order(order_input):
-#     """Create a new order according to the order_input"""
-#     # assume status==200 indicates success
-#     status = 200
-#     message = "Success"
+    # Load the order info from a cart (from a file in this case; can use DB too, or receive from HTTP requests)
+    try:
+        with open(order_input) as sample_order_file:
+            cart_order = json.load(sample_order_file)
+    except:
+        status = 501
+        message = "An error occurred in loading the order cart."
+    finally:
+        sample_order_file.close()
+    if status!=200:
+        print("Failed order creation.")
+        return {'status': status, 'message': message}
 
-    # sample_order_file = ''
+    # Create a new order: set up data fields in the order as a JSON object (i.e., a python dictionary)
+    order = dict()
+    order["orderid"] = Order.last_order_id + 1
+    order["base"] = []
+    order["datetime"] = datetime.datetime.now()
+    order["toppings"] = []
+    order["totalprice"] = []
+    order["status"] = []
+    for index, ci in enumerate(cart_item):
+        order["order_item"].append({"orderid": cart_item[index]['orderid'],
+                                "base": cart_item[index]['base'],
+                                "toppings": index + 1,
+                                "order_id": order["order_id"]
+        })
+    # check if order creation is successful
+    if len(order["order_item"])<1:
+        status = 404
+        message = "Empty order."
+    # Simulate other errors in order creation via a random bit
+    result = bool(random.getrandbits(1))
+    if not result:
+        status = 500
+        message = "A simulated error occurred when creating the order."
 
-    # # Load the order info from a cart (from a file in this case; can use DB too, or receive from HTTP requests)
-    # try:
-    #     with open(order_input) as sample_order_file:
-    #         cart_order = json.load(sample_order_file)
-    # except:
-    #     status = 501
-    #     message = "An error occurred in loading the order cart."
-    # finally:
-    #     sample_order_file.close()
-    # if status!=200:
-    #     print("Failed order creation.")
-    #     return {'status': status, 'message': message}
+    if status!=200:
+        print("Failed order creation.")
+        return {'status': status, 'message': message}
 
-    # # ***Create a new order: set up data fields in the order as a JSON object (i.e., a python dictionary)
-    # order = dict()
-    # # order["customer_id"] = cart_order['customer_id']
-    # order["order_id"] = Order.last_order_id + 1
-    # order["timestamp"] = datetime.datetime.now()
-    # order["order_item"] = []
-    # #idontunds
-    # for index, ci in enumerate(cart_item):
-    #     order["order_item"].append({"order_id": order["order_id"],
-    #                             "timestamp": order["timestamp"],
-    #                             "order_item": cart_item[index]['quantity'],
-    #                             "item_id": index + 1,
-                                
-    #     })
-    # # check if order creation is successful
-    # if len(order["order_item"])<1:
-    #     status = 404
-    #     message = "Empty order."
-    # # Simulate other errors in order creation via a random bit
-    # result = bool(random.getrandbits(1))
-    # if not result:
-    #     status = 500
-    #     message = "A simulated error occurred when creating the order."
+    # Append the newly created order to the existing orders
+    Order.orders["orders"].append(order)
+    # Increment the last_order_id; if using a DB, DBMS can manage this
+    Order.last_order_id = Order.last_order_id + 1
+    # Write the newly created order back to the file for permanent storage; if using a DB, this will be done by the DBMS
+    orders_save("orders.new.json")
 
-    # if status!=200:
-    #     print("Failed order creation.")
-    #     return {'status': status, 'message': message}
-
-    # # Append the newly created order to the existing orders
-    # Order.orders["orders"].append(order)
-    # # Increment the last_order_id; if using a DB, DBMS can manage this
-    # Order.last_order_id = Order.last_order_id + 1
-    # # Write the newly created order back to the file for permanent storage; if using a DB, this will be done by the DBMS
-    # orders_save("orders.new.json")
-
-    # # Return the newly created order when creation is succssful
-    # if status==200:
-    #     print("OK order creation.")
-    #     return order
+    # Return the newly created order when creation is succssful
+    if status==200:
+        print("OK order creation.")
+        return order
 
 def send_order(order):
-    """inform Shipping/Monitoring/Error as needed"""
+    # inform Shipping
+    r = requests.post(StaffUIURL, json = order)
+    print("Order sent to staff_UI.")
+    print(">> Response from staff_UI {}".format(r))
+    result = json.loads(r.text.lower())
+    # check/print shipping's result
+
+def send_order(order):
+    """inform Notification/Monitoring/Error as needed"""
     # default username / password to the borker are both 'guest'
     hostname = "localhost" # default broker hostname. Web management interface default at http://localhost:15672
     port = 5672 # default messaging port.
@@ -202,7 +182,7 @@ def send_order(order):
     channel = connection.channel()
 
     # set up the exchange if the exchange doesn't exist
-    exchangename="order_direct"
+    exchangename="bbtorder_direct"
     channel.exchange_declare(exchange=exchangename, exchange_type='direct')
 
     # prepare the message body content
@@ -232,7 +212,7 @@ def send_order(order):
     connection.close()
 
 #var orders = object()
-orders = get_all_orders
+orders = get_all_orders()
 serviceURL= "http://127.0.0.1:5000/order"
 
 
@@ -242,6 +222,6 @@ serviceURL= "http://127.0.0.1:5000/order"
 if __name__ == "__main__":
     print("This is " + os.path.basename(__file__) + ": creating an order...")
     # order = create_order("sample_order.txt")
-    send_order(orders)
+    send_order(results)
 #    print(get_all())
 #    print(find_by_order_id(3))
