@@ -1,11 +1,13 @@
-#!/usr/bin/env python3
-# The above shebang (#!) operator tells Unix-like environments
-# to run this file as a python3 script
-
 import json
 import sys
 import os
 import random
+import datetime
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
+from sqlalchemy import Date
+
 # from flask import Flask, request, jsonify
 # from flask_sqlalchemy import SQLAlchemy
 # from flask_cors import CORS
@@ -47,36 +49,91 @@ import pika
 #         "toppings": self.toppings,"totalprice": self.totalprice, "status": self.status}
  
 
-hostname = "localhost" # default hostname
-port = 5672 # default port
-# connect to the broker and set up a communication channel in the connection
-connection = pika.BlockingConnection(pika.ConnectionParameters(host=hostname, port=port))
-    # Note: various network firewalls, filters, gateways (e.g., SMU VPN on wifi), may hinder the connections;
-    # If "pika.exceptions.AMQPConnectionError" happens, may try again after disconnecting the wifi and/or disabling firewalls
-channel = connection.channel()
-# set up the exchange if the exchange doesn't exist
-exchangename="order_direct"
-channel.exchange_declare(exchange=exchangename, exchange_type='direct')
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/bubbletea'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-def receiveOrder():
-    # prepare a queue for receiving messages
-    channelqueue = channel.queue_declare(queue="notification", durable=True) # 'durable' makes the queue survive broker restarts so that the messages in it survive broker restarts too
-    queue_name = channelqueue.method.queue
-    channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='shipping.order') # bind the queue to the exchange via the key
+db = SQLAlchemy(app)
+CORS(app)
+ 
+class order(db.Model):
+    __tablename__ = 'order'
+ 
+    orderid = db.Column(db.String(13), primary_key=True)
+    base = db.Column(db.String(100), nullable=False)
+    datetime = db.Column(db.Date, nullable=False)
+    toppings = db.Column(db.String(200), nullable=False)
+    totalprice = db.Column(db.Float(precision=2), nullable=False)
+    status = db.Column(db.String(15), nullable=False)
+ 
+    def __init__(self, orderid, base, datetime, toppings, totalprice, status):
+        self.orderid = orderid
+        self.base = base
+        self.datetime = datetime
+        self.toppings = toppings
+        self.totalprice = totalprice
+        self.status = status
+ 
+    def json(self):
+        return {"orderid": self.orderid, "base": self.base, "datetime": self.datetime, 
+        "toppings": self.toppings,"totalprice": self.totalprice, "status": self.status}
 
-    # set up a consumer and start to wait for coming messages
-    channel.basic_qos(prefetch_count=1) # The "Quality of Service" setting makes the broker distribute only one message to a consumer if the consumer is available (i.e., having finished processing and acknowledged all previous messages that it receives)
-    channel.basic_consume(queue=queue_name, on_message_callback=callback)
-    channel.start_consuming() # an implicit loop waiting to receive messages; it doesn't exit by default. Use Ctrl+C in the command window to terminate it.
+def get_all_orders():
+    return jsonify({"orders": [order.json() for order in order.query.all()]})
+ 
+@app.route("/order")
+def get_all():
+    return jsonify({"orders": [order.json() for order in order.query.all()]})
+ 
+ 
+@app.route("/order/<string:orderid>")
+def find_by_orderid(orderid):
+    single_order = order.query.filter_by(orderid=orderid).first()
+    if order:
+        return jsonify(single_order.json())
+    return jsonify({"message": "Order not found."}), 404
 
-def callback(channel, method, properties, body): # required signature for the callback; no return
-    print("Received an order by " + __file__)
-    result = processOrder(json.loads(body))
-    # print processing result; not really needed
-    json.dump(result, sys.stdout, default=str) # convert the JSON object to a string and print out on screen
-    print() # print a new line feed to the previous json dump
-    print() # print another new line as a separator
 
+# @app.route("/order/<string:orderid>", methods=['POST'])
+# def create_order(orderid):
+#     if (order.query.filter_by(orderid=orderid).first()):
+#         return jsonify({"message": "A order with '{}' already exists.".format(orderid)}), 400
+ 
+#     data = request.get_json()
+#     order = order(orderid, **data)
+ 
+#     try:
+#         db.session.add(order)
+#         db.session.commit()
+#     except:
+#         return jsonify({"message": "An error occurred creating the order."}), 500
+ 
+#     return jsonify(order.json()), 201
+
+# @app.route("/order/<string:orderid>", methods=['PUT'])
+# def update_order(orderid):
+#     return order.query.update(order).values(status = 'Completed').where(order.columns.orderid == orderid)
+#     # stmt = order.update().where(order.c.orderid== orderid).values(status = 'Completed')
+#     # return stmt
+
+
+@app.route("/order/<string:orderid>", methods=['PUT'])
+def update_status(orderid):
+    order_update = order.query.filter_by(orderid=orderid).first()
+    order_update.status = 'Completed'
+    db.session.commit()
+    
+    if (order_update):
+        # If the order is valid I return a msg --- ask your team decide 1
+        # return jsonify({"message":"Successfully updated order."}), 200
+
+        # if the order is valid i return the order. --- ask your team decide 1
+        return jsonify({"data":order_update.json()}), 200
+        
+    return jsonify({"message": "Order not found."}), 404
+
+orders = get_all_orders()
+serviceURL= "http://127.0.0.1:5000/order"
    
 def processOrder(order):
     print("Processing an order:")
@@ -92,13 +149,6 @@ def processOrder(order):
         print("OK order received.")
     return result
 
-def send_error(resultmessage):
-    # send the message to the eror handler
-    channel.queue_declare(queue='errorhandler', durable=True) # make sure the queue used by the error handler exist and durable
-    channel.queue_bind(exchange=exchangename, queue='errorhandler', routing_key='shipping.error') # make sure the queue is bound to the exchange
-    channel.basic_publish(exchange=exchangename, routing_key="shipping.error", body=resultmessage,
-        properties=pika.BasicProperties(delivery_mode = 2) # make message persistent within the matching queues until it is received by some receiver (the matching queues have to exist and be durable and bound to the exchange)
-    )
 
 
 
