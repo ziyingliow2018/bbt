@@ -146,7 +146,7 @@
                                 "<td>" + order.toppings + "</td>" +
                                 "<td>" + order.totalprice + "</td>" +
                                 "<td>" + order.status + "</td>" +
-                                "<td><button id='" + order.orderid + "' onclick='updateRecord(" + order.orderid+ ");'>Update</button></td>"
+                                "<td><button id='" + order.orderid + "' onclick='updateRecord(" + order.orderid+ ");')>Update</button></td>"
                                 // "<td><input type= 'submit' name= 'update order' value = 'Update'  onClick='window.location='page_name.html'' ></td>";
                             rows += "<tbody><tr>" + eachRow + "</tr></tbody>";
                         }
@@ -162,7 +162,45 @@
                
             } // error
         };
+//tele
+        // async function sendmsg(orderId){
+        //         // what is data? data is a local variable ... 
+        //         //var orders = data.orders; 
+        //         //for (const orders of order){
+        //     var API_KEY_TOKEN = '1010659472:AAHL0PoXGBMKB8-mHY8YDPitOTC6U7j0kwk'
+        //     var serviceURL = "https://api.telegram.org/bot{}/sendMessage".format(API_KEY_TOKEN)
 
+        //     try {
+        //         const response =
+        //             await fetch(
+        //                 serviceURL, 
+        //                 { method: 'POST' ,
+        //                 headers: { "Content-Type": "application/json" },
+                
+
+        //         });
+        //         var data = await response.json();
+        //         if (response.ok){
+        //             console.log(data);
+        //             loadData();
+        //             // window.location.reload(true);
+        //             // Show your OK message to the front-end
+        //         }else{
+        //                 showError("Order Noti not sent")
+        //             }
+                
+        //     } catch (error) {
+        //         // Errors when calling the service; such as network error, 
+        //         // service offline, etc
+        //         showError
+        //         ('There is a problem sending order data, please try again later.<br />'+error);
+                
+        //     } // error
+
+        // };
+
+    
+//
 
         //update !! // 
 
@@ -185,6 +223,7 @@
                     if (response.ok){
                         console.log(data);
                         loadData();
+ 
                         // window.location.reload(true);
                         // Show your OK message to the front-end
                     }else{
