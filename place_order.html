@@ -28,7 +28,6 @@
         <!-- Optimal Internet Explorer compatibility -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     
-
     <title>Bubble Tea Menu</title>
 
     <link rel="stylesheet" href="">
@@ -78,14 +77,13 @@
     </div>
   </header><!-- End Header -->
   <br>
-
+    <a  id="searchOrderBtn" class="btn btn-primary" href="index.html" >Back to HomePage</a>
     <br></br>
     <div id="item-container" class="container">
         <h1 class="display-4">Menu</h1>
         <table id="itemTable" class='table table-striped' border='1'>
             <thead class='thead-dark'>
                 <tr>
-                    <th>ItemID</th>
                     <th>Item Name</th>
                     <th>Price ($)</th>
                     </tr>
@@ -95,10 +93,17 @@
     <div id="formcontainer" class="container">
         <!-- <h1 class="display-4">Menu</h1> -->
         <form id="itemForm">
-            <h3 id="header1" class="color"></h3>
-            <h3 id="header2" class="color"></h3>
+            <div id="base" method="post">
+                <h3 id="header1" class="color">Step 1: Choose Your Base: </h3>
+            </div>
+            <div id="topping">
+                <h3 id="header2" class="color"></h3>
+            </div>
+            <!-- <h3 id="header1" class="color"></h3>
+            <h3 id="header2" class="color"></h3> -->
         </form>
     </div>
+    <label id="error" class="text-danger"></label>
     <script>
       
         // Helper function to display error message
@@ -129,7 +134,7 @@
                 );
                 const data = await response.json();
                 var items = data.items; //the arr is in data.orders of the JSON data
-                console.log(items);
+                // console.log(items);
                 
                 // array or array.length are false
                 if (!items || !items.length) {
@@ -140,21 +145,19 @@
                     var rows = "";
                     $("td").remove();
 
-                    header1.innerText= "Step 1: Choose Your Base: ";
                     for (const item of items) {
                        
                         eachRow =   
-                            "<td>" + item.itemid + "</td>" +
                             "<td>" + item.itemname + "</td>" +
                             "<td>" + item.price + "</td>"
                         rows += "<tbody><tr>" + eachRow + "</tr></tbody>";
 
                         if (item.type=="base"){
-                            var myDiv= document.getElementById("formcontainer");
+                            var myDiv= document.getElementById("base");
                             var input= document.createElement("input");
-                            input.id="base";
+                            input.id=item.itemid;
                             input.type="radio";
-                            input.name=item.itemid;
+                            input.name="base";
                             input.value=item.itemid;
                             var label= document.createElement('label');
                             label.htmlFor='id';
@@ -170,23 +173,26 @@
                     $('#itemTable').append(rows);
 
 
-                    var myDiv= document.getElementById("formcontainer");
+                    var myDiv= document.getElementById("topping");
                     var header=document.getElementById("header2"); 
-                    var text=document.createTextNode("Step 2: Select Your Topping(s): ");
+                    var text=document.createTextNode("Step 2: Select Your Topping: ");
                     header.appendChild(text);
                     myDiv.appendChild(header);
                     for (const item of items) {
+                        // console.log(data);
                         if (item.type=="topping"){
-                            var input=document.createElement("input");
-                            input.type= "checkbox";
-                            input.name=item.itemid;
+                            var myDiv= document.getElementById("topping");
+                            var input= document.createElement("input");
+                            input.id=item.itemid;
+                            input.type="radio";
+                            input.name="topping";
                             input.value=item.itemid;
                             var label= document.createElement('label');
                             label.htmlFor='id';
                             label.appendChild(document.createTextNode(item.itemname , '</br>'));
                             myDiv.appendChild(input);
                             myDiv.appendChild(label);
-                            //prints a new line
+                            // prints a new line
                             var newElem = document.createElement("BR");
                             myDiv.insertBefore(newElem,input);
                         }
@@ -201,16 +207,83 @@
             } // error
         };
 
+        //Create submit button
+        var form=document.getElementById("itemForm");
+        var input= document.createElement("input");
+        input.type="submit";
+        input.onclick="processOrder()";
+        form.appendChild(input);
+        
+        function showError(message) {
+        // Display an error under the the predefined label with error as the id
+        $('#error').text(message);
+        }
+
+
+
+    // Add an order
+        $("#itemForm").submit(async (event) => {
+        //Prevents screen from refreshing when submitting
+        event.preventDefault();
+
+        var serviceURL = "http://127.0.0.1:5000/order/";
+        var homeURL = "index.html";
+        
+        //Get form data 
+        // var title = $('#title').val();
+        // var isbnNumber = $('#isbn13').val();
+        // var price = parseFloat($('#price').val());
+        // var availability = parseInt($("#availability").val());
+        // var base_object= $('#base').val();
+        // // console.log(base_object);
+        // for (i=0; i <base_object.length;i++){
+        //     if(base_object[i].checked)
+        //         var base= base_object[i].value;
+        // }
+        // var topping_object= $('#topping').val();
+        // for (i=0; i <topping_object.length;i++){
+        //     if(topping_object[i].selected)
+        //         var topping= topping_object[i].value;
+        // }
+        var base;
+        var topping;
+        var price;
+        var status;
+
+        // form the POST url which includes the dynamic isbnNumber
+        serviceURL += '16';
+        try {
+            const response =
+                await fetch(
+                    serviceURL, {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ base: "black tea", topping:"cheese",  price:"3.8", status: "Incomplete" })
+                });
+            const data = await response.json();
+
+            if (response.ok) {
+                // relocate to home page
+                window.location.replace(homeURL);
+                return false;
+            } else {
+                console.log(data);
+                showError(data.message);
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            showError
+                ("There is a problem adding this item, please try again later. " + error);
+
+        } // error
+    });
+        // var base= document.getElementByName('base').value;
+        // for (i=0; i <base.length;i++){
+        //     if(base[i].checked)
+        //         var base_value= base[i].value;
+        // }
 </script>
 <!---->
     </body>
     </html>
-
-<html>
-    <div class="wrapper">
-        <center><a  id="searchOrderBtn" class="btn btn-primary" 
-        href="ProcessNewOrder.html" >Submit</a>
-        <a  id="searchOrderBtn" class="btn btn-primary" 
-        href="index.html" >Back</a>
-        </div></center>
-</html>

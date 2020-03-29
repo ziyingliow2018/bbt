@@ -87,7 +87,7 @@
                 <tr>
                     <th>OrderID</th>
                     <th>Base</th>
-                    <th>Topping(s)</th>
+                    <th>Topping</th>
                     <th>Price</th>
                     <th>Status</th>
                     <th>Update Order</th>
@@ -118,7 +118,7 @@
         // - using await requires the function that calls it to be async
         async function loadData(){        
             // Change serviceURL to your own
-            var serviceURL = "http://127.0.0.1:5000/order";
+            var serviceURL = "http://127.0.0.1:5001/order";
     
             try {
                 const response =
@@ -170,7 +170,7 @@
                 // what is data? data is a local variable ... 
                 //var orders = data.orders; 
                 //for (const orders of order){
-                var serviceURL = "http://127.0.0.1:5000/order/" + orderId;
+                var serviceURL = "http://127.0.0.1:5001/order/" + orderId;
 
                 try {
                     const response =

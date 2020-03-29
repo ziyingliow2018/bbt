@@ -30,7 +30,6 @@ DROP TABLE IF EXISTS `order`;
 CREATE TABLE IF NOT EXISTS `order` (
   `OrderID` int(11) NOT NULL auto_increment,
   `Base` varchar(100) NOT NULL,
-  `DateTime` TIMESTAMP,
   `Toppings` varchar(200) NOT NULL,
   `TotalPrice` decimal(10,2) NOT NULL,
   `Status` varchar(20) DEFAULT NULL,

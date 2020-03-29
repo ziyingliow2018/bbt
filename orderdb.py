@@ -7,6 +7,9 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy import Date
+import requests
+import telebot
+import json
 
 import pika
 import mysql.connector
@@ -38,75 +41,82 @@ def index():
 # class order(db.Model):
 #     __tablename__ = 'order'
  
-#     orderid = db.Column(db.String(13), primary_key=True)
-#     base = db.Column(db.String(100), nullable=False)
-#     datetime = db.Column(db.Date, nullable=False)
-#     toppings = db.Column(db.String(200), nullable=False)
-#     totalprice = db.Column(db.Float(precision=2), nullable=False)
-#     status = db.Column(db.String(15), nullable=False)
+class Order(db.Model):
+    __tablename__ = 'order'
  
-#     def __init__(self, orderid, base, datetime, toppings, totalprice, status):
-#         self.orderid = orderid
-#         self.base = base
-#         self.datetime = datetime
-#         self.toppings = toppings
-#         self.totalprice = totalprice
-#         self.status = status
+    orderid = db.Column(db.String(13), primary_key=True)
+    base = db.Column(db.String(100), nullable=False)
+    # datetime = db.Column(db.TimeStamp, nullable=False)
+    toppings = db.Column(db.String(200), nullable=False)
+    totalprice = db.Column(db.Float(precision=2), nullable=False)
+    status = db.Column(db.String(15), nullable=False)
  
-#     def json(self):
-#         return {"orderid": self.orderid, "base": self.base, "datetime": self.datetime, 
-#         "toppings": self.toppings,"totalprice": self.totalprice, "status": self.status}
+    def __init__(self, orderid, base, toppings, totalprice, status):
+        self.orderid = orderid
+        self.base = base
+        # self.datetime = datetime
+        self.toppings = toppings
+        self.totalprice = totalprice
+        self.status = status
  
- 
-# @app.route("/order")
-# def get_all_orders():
-#     return jsonify({"orders": [order.json() for order in order.query.all()]})
+    def json(self):
+        return {"orderid": self.orderid, "base": self.base, 
+        "toppings": self.toppings,"totalprice": self.totalprice, "status": self.status}
  
  
-# @app.route("/order/<string:orderid>")
-# def find_by_orderid(orderid):
-#     single_order = order.query.filter_by(orderid=orderid).first()
-#     if order:
-#         return jsonify(single_order.json())
-#     return jsonify({"message": "Order not found."}), 404
+@app.route("/order")
+def get_all():
+    return jsonify({"orders": [order.json() for order in Order.query.all()]})
+ 
+ 
+@app.route("/order/<string:orderid>")
+def find_by_orderid(orderid):
+    order = Order.query.filter_by(orderid=orderid).first()
+    if order:
+        return jsonify(order.json())
+    return jsonify({"message": "Order not found."}), 404
 
 
-# @app.route("/order/<string:orderid>", methods=['POST'])
-# def create_order(orderid):
-#     if (order.query.filter_by(orderid=orderid).first()):
-#         return jsonify({"message": "A order with '{}' already exists.".format(orderid)}), 400
+@app.route("/order/<string:orderid>", methods=['POST'])
+def create_order(orderid):
+    if (Order.query.filter_by(orderid=orderid).first()):
+        return jsonify({"message": "A order with orderid '{}' already exists.".format(orderid)}), 400
  
-#     data = request.get_json()
-#     order = order(orderid, **data)
+    data = request.get_json()
+    order = Order(orderid, **data)
  
-#     try:
-#         db.session.add(order)
-#         db.session.commit()
-#     except:
-#         return jsonify({"message": "An error occurred creating the order."}), 500
+    try:
+        db.session.add(order)
+        db.session.commit()
+    except:
+        return jsonify({"message": "An error occurred creating the order."}), 500
  
-#     return jsonify(order.json()), 201
-
-# @app.route("/order/<string:orderid>", methods=['PUT'])
-# def update_order(orderid):
-#     return order.query.update(order).values(status = 'Completed').where(order.columns.orderid == orderid)
-#     # stmt = order.update().where(order.c.orderid== orderid).values(status = 'Completed')
-#     # return stmt
+    return jsonify(order.json()), 201
 
 
 @app.route("/order/<string:orderid>", methods=['PUT'])
 def update_status(orderid):
-    order_update = order.query.filter_by(orderid=orderid).first()
+    order_update = Order.query.filter_by(orderid=orderid).first()
     order_update.status = 'Completed'
     db.session.commit()
     
     if (order_update):
-        # If the order is valid I return a msg --- ask your team decide 1
         # return jsonify({"message":"Successfully updated order."}), 200
 
-        # if the order is valid i return the order. --- ask your team decide 1
-        return jsonify({"data":order_update.json()}), 200
+        orderdetails = order_update.base + ' with ' + order_update.toppings
+        #xs bot
+        # token = '1118152555:AAHxrro7MkFKmrQp1cIvJ17Oq1wF0p4v_Uk' 
+        #zh bot
+        token = '1010659472:AAHL0PoXGBMKB8-mHY8YDPitOTC6U7j0kwk'
+        #idp grp
+        # chat_id = '-1001240530419'
+        # #zh tele
+        chat_id = '254976991'
+        send_text_url = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text=Order+Number:+{orderid},+{orderdetails},+is+ready+for+collection!++Thank+You+for+waiting!+:)'
+        requests.get(send_text_url)
+       
         
+        return jsonify({"data":order_update.json()}), 200
     return jsonify({"message": "Order not found."}), 404
 
 def send_order(order):
