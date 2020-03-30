@@ -134,11 +134,10 @@
                 );
                 const data = await response.json();
                 var items = data.items; //the arr is in data.orders of the JSON data
-                // console.log(items);
                 
                 // array or array.length are false
                 if (!items || !items.length) {
-                    console.log(data);
+                    // console.log(data);
                     showError('Item list empty or undefined.')
                 } else {
                     // for loop to setup all table rows with obtained order data
@@ -179,7 +178,6 @@
                     header.appendChild(text);
                     myDiv.appendChild(header);
                     for (const item of items) {
-                        // console.log(data);
                         if (item.type=="topping"){
                             var myDiv= document.getElementById("topping");
                             var input= document.createElement("input");
@@ -211,7 +209,7 @@
         var form=document.getElementById("itemForm");
         var input= document.createElement("input");
         input.type="submit";
-        input.onclick="processOrder()";
+        // input.onclick="processOrder()";
         form.appendChild(input);
         
         function showError(message) {
@@ -226,57 +224,136 @@
         //Prevents screen from refreshing when submitting
         event.preventDefault();
 
-        var serviceURL = "http://127.0.0.1:5000/order/";
-        var homeURL = "index.html";
+        var PostURL = "http://127.0.0.1:5001/order/";
+        var homeURL = "thankyou.html";
         
         //Get form data 
-        // var title = $('#title').val();
-        // var isbnNumber = $('#isbn13').val();
-        // var price = parseFloat($('#price').val());
-        // var availability = parseInt($("#availability").val());
-        // var base_object= $('#base').val();
-        // // console.log(base_object);
-        // for (i=0; i <base_object.length;i++){
-        //     if(base_object[i].checked)
-        //         var base= base_object[i].value;
-        // }
-        // var topping_object= $('#topping').val();
-        // for (i=0; i <topping_object.length;i++){
-        //     if(topping_object[i].selected)
-        //         var topping= topping_object[i].value;
-        // }
-        var base;
-        var topping;
-        var price;
-        var status;
+        var x = document.getElementById('base');
+        var inputElements = x.querySelectorAll("input, select, checkbox, textarea");
+        // var hello= inputElements[0].innerHTML;
+        // console.log(inputElements[0].nodeValue);
+        // document.write(inputElements[0].value);
+        for (i=0; i <inputElements.length;i++){
+            if(inputElements[i].checked){
+                var selected_baseid= inputElements[i].value;
+                // document.write(selected_baseid);
+            }
+        }
+
+        var y = document.getElementById('topping');
+        var toppingElements = y.querySelectorAll("input, select, checkbox, textarea");
+        for (i=0; i <toppingElements.length;i++){
+            if(toppingElements[i].checked){
+                var selected_toppingid= toppingElements[i].value;
+                // document.write(selected_toppingid);
+            }
+        }
+
+        $(document).ready( function (){
+            loadData();
+        });
+
+        async function loadData(){        
+            // Change serviceURL to your own
+            var serviceURL = "http://localhost:5000/item";
+    
+            try {
+                const response =
+                 await fetch(
+                   serviceURL, { method: 'GET'}
+                );
+                const data = await response.json();
+                var items = data.items; //the arr is in data.orders of the JSON data
+                console.log(data);
+                for (const item of items) {
+                    // document.write(selected_baseid);
+                    if (item.itemid==selected_baseid){
+                        var base= item.itemname;
+                        var base_price= item.price;
+                    }
+                    if (item.itemid==selected_toppingid){
+                        var topping= item.itemname;
+                        var topping_price= item.price
+                    }
+                }
+                var price = base_price + topping_price;
+                // document.write(price);
+                var status;
+                // console.log(base);
+                // console.log(topping);
+                // console.log(price);
+                var status;
+                PostURL += '22';
+                // console.log(PostURL);
+                try {
+                    const response =
+                        await fetch(
+                            PostURL, {
+                            method: 'POST',
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ base: base, toppings: topping, totalprice: price, status: "Incomplete" })
+                        });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // relocate to home page
+                        window.location.replace(homeURL);
+                        return false;
+                    } else {
+                        // console.log(data);
+                        showError(data.message);
+                    }
+                } catch (error) {
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    showError
+                        ("There is a problem adding this item, please try again later. " + error);
+
+                } // error
+
+            } catch (error) {
+                // Errors when calling the service; such as network error, 
+                // service offline, etc
+                showError
+              ('There is a problem retrieving pricing data, please try again later.<br />'+error);
+               
+            } // error
+        };
+        // var base;
+        // var topping;
+        // var price;
+        // var status;
 
         // form the POST url which includes the dynamic isbnNumber
-        serviceURL += '16';
-        try {
-            const response =
-                await fetch(
-                    serviceURL, {
-                    method: 'POST',
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ base: "black tea", topping:"cheese",  price:"3.8", status: "Incomplete" })
-                });
-            const data = await response.json();
+        //need to implement the auto incrment here
+        // serviceURL += '6';
+        // try {
+        //     const response =
+        //         await fetch(
+        //             serviceURL, {
+        //             method: 'POST',
+        //             headers: { "Content-Type": "application/json" },
+        //             body: JSON.stringify({ base: base, toppings: topping, totalprice: "3", status: "Incomplete" })
+        //         });
 
-            if (response.ok) {
-                // relocate to home page
-                window.location.replace(homeURL);
-                return false;
-            } else {
-                console.log(data);
-                showError(data.message);
-            }
-        } catch (error) {
-            // Errors when calling the service; such as network error, 
-            // service offline, etc
-            showError
-                ("There is a problem adding this item, please try again later. " + error);
+        //     const data = await response.json();
 
-        } // error
+        //     if (response.ok) {
+        //         // relocate to home page
+        //         window.location.replace(homeURL);
+        //         return false;
+        //     } else {
+        //         // console.log(data);
+        //         showError(data.message);
+        //     }
+        // } catch (error) {
+        //     // Errors when calling the service; such as network error, 
+        //     // service offline, etc
+        //     showError
+        //         ("There is a problem adding this item, please try again later. " + error);
+
+        // } // error
     });
         // var base= document.getElementByName('base').value;
         // for (i=0; i <base.length;i++){
