@@ -20,26 +20,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 CORS(app)
-
-app.config['MYSQL_HOST'] = '127.0.0.1'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'bubbletea'
-mysql = MySQL(app)
-
-@app.route('/order')
-def index():
-   cur = mysql.connection.cursor()
-   cur.execute('''SELECT * FROM Users WHERE id=1''')
-   row_headers=[x[0] for x in cur.description] #this will extract row headers
-   rv = cur.fetchall()
-   json_data=[]
-   for result in rv:
-        json_data.append(dict(zip(row_headers,result)))
-   return json.dumps(json_data)
-
-# class order(db.Model):
-#     __tablename__ = 'order'
  
 class Order(db.Model):
     __tablename__ = 'order'
@@ -160,7 +140,7 @@ def send_order(order):
     # close the connection to the broker
     connection.close()
 
-#orders = get_all_orders()
+orders = get_all
 serviceURL= "http://127.0.0.1:5000/order"
 
 
