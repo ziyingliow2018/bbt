@@ -91,16 +91,16 @@
         </table>
     </div>
     <div id="formcontainer" class="container">
-        <!-- <h1 class="display-4">Menu</h1> -->
         <form id="itemForm">
+            <!-- <label for="title"><h3 id="header1" class="color">Enter Your Initials: </h3></label>
+            <input type="text" class="form-control" id="orderid" aria-describedby="emailHelp" placeholder="Enter Your Initials"
+                    value="Initials"> -->
             <div id="base" method="post">
                 <h3 id="header1" class="color">Step 1: Choose Your Base: </h3>
             </div>
             <div id="topping">
                 <h3 id="header2" class="color"></h3>
             </div>
-            <!-- <h3 id="header1" class="color"></h3>
-            <h3 id="header2" class="color"></h3> -->
         </form>
     </div>
     <label id="error" class="text-danger"></label>
@@ -145,12 +145,13 @@
                     $("td").remove();
 
                     for (const item of items) {
-                       
+                        // add the items into the menu  table
                         eachRow =   
                             "<td>" + item.itemname + "</td>" +
                             "<td>" + item.price + "</td>"
                         rows += "<tbody><tr>" + eachRow + "</tr></tbody>";
 
+                        // create radio input for base, stored under div header
                         if (item.type=="base"){
                             var myDiv= document.getElementById("base");
                             var input= document.createElement("input");
@@ -171,13 +172,14 @@
                     // add all the rows to the table
                     $('#itemTable').append(rows);
 
-
+                    // add header "Step 2: choose your topping:"
                     var myDiv= document.getElementById("topping");
                     var header=document.getElementById("header2"); 
                     var text=document.createTextNode("Step 2: Select Your Topping: ");
                     header.appendChild(text);
                     myDiv.appendChild(header);
                     for (const item of items) {
+                        //create radio input for topping stored under div topping
                         if (item.type=="topping"){
                             var myDiv= document.getElementById("topping");
                             var input= document.createElement("input");
@@ -227,27 +229,26 @@
         var PostURL = "http://127.0.0.1:5001/order/";
         var homeURL = "thankyou.html";
         
-        //Get form data 
+        //Get form datas
+
         var x = document.getElementById('base');
         var inputElements = x.querySelectorAll("input, select, checkbox, textarea");
-        // var hello= inputElements[0].innerHTML;
-        // console.log(inputElements[0].nodeValue);
-        // document.write(inputElements[0].value);
         for (i=0; i <inputElements.length;i++){
+            // store value in var-selected_baseid if it's selected by customer
             if(inputElements[i].checked){
                 var selected_baseid= inputElements[i].value;
-                // document.write(selected_baseid);
             }
         }
 
         var y = document.getElementById('topping');
         var toppingElements = y.querySelectorAll("input, select, checkbox, textarea");
         for (i=0; i <toppingElements.length;i++){
+            // store value in var-selected_toppingid if it's selected by customer
             if(toppingElements[i].checked){
                 var selected_toppingid= toppingElements[i].value;
-                // document.write(selected_toppingid);
             }
         }
+       
 
         $(document).ready( function (){
             loadData();
@@ -266,7 +267,7 @@
                 var items = data.items; //the arr is in data.orders of the JSON data
                 console.log(data);
                 for (const item of items) {
-                    // document.write(selected_baseid);
+                    //retrieve basename, base price, itemname, itemprice
                     if (item.itemid==selected_baseid){
                         var base= item.itemname;
                         var base_price= item.price;
@@ -277,14 +278,13 @@
                     }
                 }
                 var price = base_price + topping_price;
-                // document.write(price);
+            
                 var status;
-                // console.log(base);
-                // console.log(topping);
-                // console.log(price);
-                var status;
-                PostURL += '22';
-                // console.log(PostURL);
+                // var orderid = $('#orderid').val();
+                // document.write(orderid);
+                // PostURL += orderid;
+                PostURL += "2";
+               
                 try {
                     const response =
                         await fetch(
@@ -297,11 +297,10 @@
                     const data = await response.json();
 
                     if (response.ok) {
-                        // relocate to home page
+                        // relocate to thank you page
                         window.location.replace(homeURL);
                         return false;
                     } else {
-                        // console.log(data);
                         showError(data.message);
                     }
                 } catch (error) {
@@ -320,47 +319,9 @@
                
             } // error
         };
-        // var base;
-        // var topping;
-        // var price;
-        // var status;
-
-        // form the POST url which includes the dynamic isbnNumber
-        //need to implement the auto incrment here
-        // serviceURL += '6';
-        // try {
-        //     const response =
-        //         await fetch(
-        //             serviceURL, {
-        //             method: 'POST',
-        //             headers: { "Content-Type": "application/json" },
-        //             body: JSON.stringify({ base: base, toppings: topping, totalprice: "3", status: "Incomplete" })
-        //         });
-
-        //     const data = await response.json();
-
-        //     if (response.ok) {
-        //         // relocate to home page
-        //         window.location.replace(homeURL);
-        //         return false;
-        //     } else {
-        //         // console.log(data);
-        //         showError(data.message);
-        //     }
-        // } catch (error) {
-        //     // Errors when calling the service; such as network error, 
-        //     // service offline, etc
-        //     showError
-        //         ("There is a problem adding this item, please try again later. " + error);
-
-        // } // error
+        
     });
-        // var base= document.getElementByName('base').value;
-        // for (i=0; i <base.length;i++){
-        //     if(base[i].checked)
-        //         var base_value= base[i].value;
-        // }
-</script>
-<!---->
+        
+</script
     </body>
     </html>
