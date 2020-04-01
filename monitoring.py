@@ -22,7 +22,7 @@ channel = connection.channel()
 exchangename="bbtorder_direct"
 channel.exchange_declare(exchange=exchangename, exchange_type='direct')
 
-def recieveOrderLog():
+def receiveOrderLog():
 # prepare a queue for receiving messages
     channelqueue = channel.queue_declare(queue="monitoring", durable=True) # 'durable' makes the queue survive broker restarts so that the messages in it survive broker restarts too
     queue_name = channelqueue.method.queue
@@ -68,4 +68,4 @@ def processOrderLog(order):
 
 if __name__ == "__main__":  # execute this program only if it is run as a script (not by 'import')
     print("This is " + os.path.basename(__file__) + ": monitoring order creation...")
-    recieveOrderLog()
+    receiveOrderLog()
