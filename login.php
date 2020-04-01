@@ -27,7 +27,9 @@
         <div id="formWrapper">
             <div id="form">
                 <div class="logo">
-                    <h1 class="text-center head">SMÖÖ CHÁ</h1>
+                    
+                    <!-- <h1 class="text-center head">SMÖÖ CHÁ</h1> -->
+                    <img src='assets/img/bbt_logo.jpg' style="width:275px;height:120px;">
                 </div>
 
                 <div class="form-item">
