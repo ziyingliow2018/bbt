@@ -11,19 +11,20 @@ import random
 # Use a message-broker with 'direct' exchange to enable interaction
 import pika
 
-hostname = "localhost" # default hostname
-port = 5672 # default port
-# connect to the broker and set up a communication channel in the connection
-connection = pika.BlockingConnection(pika.ConnectionParameters(host=hostname, port=port))
-    # Note: various network firewalls, filters, gateways (e.g., SMU VPN on wifi), may hinder the connections;
-    # If "pika.exceptions.AMQPConnectionError" happens, may try again after disconnecting the wifi and/or disabling firewalls
-channel = connection.channel()
-# set up the exchange if the exchange doesn't exist
-exchangename="bbtorder_direct"
-channel.exchange_declare(exchange=exchangename, exchange_type='direct')
+
 
 def receiveOrderLog():
-# prepare a queue for receiving messages
+    hostname = "localhost" # default hostname
+    port = 5672 # default port
+    # connect to the broker and set up a communication channel in the connection
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=hostname, port=port))
+        # Note: various network firewalls, filters, gateways (e.g., SMU VPN on wifi), may hinder the connections;
+        # If "pika.exceptions.AMQPConnectionError" happens, may try again after disconnecting the wifi and/or disabling firewalls
+    channel = connection.channel()
+    # set up the exchange if the exchange doesn't exist
+    exchangename="bbtorder_direct"
+    channel.exchange_declare(exchange=exchangename, exchange_type='direct')
+    # prepare a queue for receiving messages
     channelqueue = channel.queue_declare(queue="monitoring", durable=True) # 'durable' makes the queue survive broker restarts so that the messages in it survive broker restarts too
     queue_name = channelqueue.method.queue
     channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='monitoring.info') # bind the queue to the exchange via the key
@@ -62,7 +63,7 @@ def callback(channel, method, properties, body): # required signature for the ca
     print() # print a new line feed
 
 def processOrderLog(order):
-    print("Recording an order log:")
+    print("A New Order Successfully created.")
     print(order)
 
 

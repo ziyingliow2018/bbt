@@ -28,7 +28,7 @@ INSERT INTO `item` (`ItemID`, `ItemName`, `Price`,`Type`) VALUES
 
 DROP TABLE IF EXISTS `order`;
 CREATE TABLE IF NOT EXISTS `order` (
-  `OrderID` int(11) NOT NULL auto_increment,
+  `OrderID` varchar(10) NOT NULL,
   `Base` varchar(100) NOT NULL,
   `Toppings` varchar(200) NOT NULL,
   `TotalPrice` decimal(10,2) NOT NULL,
