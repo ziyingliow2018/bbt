@@ -6,7 +6,7 @@ import datetime
 from flask import Flask
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flaskext.mysql import MySQL
+# from flaskext.mysql import MySQL
 from flask_cors import CORS
 from sqlalchemy import Date
 import requests
@@ -160,11 +160,11 @@ def send_order(order):
 orders = get_all
 #orders = index()
 # create_order(orders)
-serviceURL= "http://127.0.0.1:5000/order"
+serviceURL= "http://127.0.0.1:5001/order"
 
 
 if __name__ == '__main__':
     print("This is " + os.path.basename(__file__) + ": recieving an order...")
     send_order(orders)
-    app.run(port=5000, debug=True)
+    app.run(port=5001, debug=True)
     
