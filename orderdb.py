@@ -6,7 +6,7 @@ import datetime
 from flask import Flask
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flaskext.mysql import MySQL
+# from flaskext.mysql import MySQL
 from flask_cors import CORS
 from sqlalchemy import Date
 import requests
