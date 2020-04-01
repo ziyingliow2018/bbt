@@ -3,8 +3,10 @@ import sys
 import os
 import random
 import datetime
+from flask import Flask
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flaskext.mysql import MySQL
 from flask_cors import CORS
 from sqlalchemy import Date
 import requests
@@ -20,26 +22,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 CORS(app)
-
-app.config['MYSQL_HOST'] = '127.0.0.1'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'bubbletea'
-mysql = MySQL(app)
-
-@app.route('/order')
-def index():
-   cur = mysql.connection.cursor()
-   cur.execute('''SELECT * FROM Users WHERE id=1''')
-   row_headers=[x[0] for x in cur.description] #this will extract row headers
-   rv = cur.fetchall()
-   json_data=[]
-   for result in rv:
-        json_data.append(dict(zip(row_headers,result)))
-   return json.dumps(json_data)
-
-# class order(db.Model):
-#     __tablename__ = 'order'
  
 class Order(db.Model):
     __tablename__ = 'order'
@@ -63,11 +45,26 @@ class Order(db.Model):
         return {"orderid": self.orderid, "base": self.base, 
         "toppings": self.toppings,"totalprice": self.totalprice, "status": self.status}
  
- 
+# app.config['MYSQL_HOST'] = '127.0.0.1'
+# app.config['MYSQL_USER'] = 'root'
+# app.config['MYSQL_PASSWORD'] = ''
+# app.config['MYSQL_DB'] = 'bubbletea'
+# mysql = MySQL(app)
+
+# @app.route('/hello')
+# def index():
+#    cur = mysql.connection.cursor()
+#    cur.execute('''SELECT * FROM order''')
+#    row_headers=[x[0] for x in cur.description] #this will extract row headers
+#    rv = cur.fetchall()
+#    json_data=[]
+#    for result in rv:
+#         json_data.append(dict(zip(row_headers,result)))
+#    return json.dumps(json_data)
+
 @app.route("/order")
 def get_all():
     return jsonify({"orders": [order.json() for order in Order.query.all()]})
- 
  
 @app.route("/order/<string:orderid>")
 def find_by_orderid(orderid):
@@ -160,7 +157,9 @@ def send_order(order):
     # close the connection to the broker
     connection.close()
 
-#orders = get_all_orders()
+orders = get_all
+#orders = index()
+# create_order(orders)
 serviceURL= "http://127.0.0.1:5000/order"
 
 
