@@ -13,7 +13,7 @@ import pika
 
 
 
-def recieveOrderLog():
+def receiveOrderLog():
     hostname = "localhost" # default hostname
     port = 5672 # default port
     # connect to the broker and set up a communication channel in the connection
@@ -69,4 +69,4 @@ def processOrderLog(order):
 
 if __name__ == "__main__":  # execute this program only if it is run as a script (not by 'import')
     print("This is " + os.path.basename(__file__) + ": monitoring order creation...")
-    recieveOrderLog()
+    receiveOrderLog()
