@@ -12,6 +12,8 @@ from sqlalchemy import Date
 import requests
 import telebot
 import json
+import pyodbc
+import collections
 
 import pika
 import mysql.connector
@@ -44,23 +46,9 @@ class Order(db.Model):
     def json(self):
         return {"orderid": self.orderid, "base": self.base, 
         "toppings": self.toppings,"totalprice": self.totalprice, "status": self.status}
- 
-# app.config['MYSQL_HOST'] = '127.0.0.1'
-# app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_PASSWORD'] = ''
-# app.config['MYSQL_DB'] = 'bubbletea'
-# mysql = MySQL(app)
 
-# @app.route('/hello')
-# def index():
-#    cur = mysql.connection.cursor()
-#    cur.execute('''SELECT * FROM order''')
-#    row_headers=[x[0] for x in cur.description] #this will extract row headers
-#    rv = cur.fetchall()
-#    json_data=[]
-#    for result in rv:
-#         json_data.append(dict(zip(row_headers,result)))
-#    return json.dumps(json_data)
+def get_everything():
+    return jsonify({"orders": [order.json() for order in Order.query.all()]})
 
 @app.route("/order")
 def get_all():
@@ -116,7 +104,7 @@ def update_status(orderid):
         return jsonify({"data":order_update.json()}), 200
     return jsonify({"message": "Order not found."}), 404
 
-def send_order(order):
+def send_order():
     """inform Notification/Monitoring/Error as needed"""
     # default username / password to the borker are both 'guest'
     hostname = "localhost" # default broker hostname. Web management interface default at http://localhost:15672
@@ -132,7 +120,7 @@ def send_order(order):
     channel.exchange_declare(exchange=exchangename, exchange_type='direct')
 
     # prepare the message body content
-    message = json.dumps(order, default=str) # convert a JSON object to a string
+    message = json.dumps('Order Creation Successful', default=str) # convert a JSON object to a string
 
     # send the message
     # always inform Monitoring for logging no matter if successful or not
@@ -157,14 +145,14 @@ def send_order(order):
     # close the connection to the broker
     connection.close()
 
-orders = get_all
+# orders = get_everything()
 #orders = index()
 # create_order(orders)
-serviceURL= "http://127.0.0.1:5000/order"
+serviceURL= "http://127.0.0.1:5001/order"
 
 
 if __name__ == '__main__':
     print("This is " + os.path.basename(__file__) + ": recieving an order...")
-    send_order(orders)
+    send_order()
     app.run(port=5000, debug=True)
     
