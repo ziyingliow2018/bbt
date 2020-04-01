@@ -92,9 +92,9 @@
     </div>
     <div id="formcontainer" class="container">
         <form id="itemForm">
-            <!-- <label for="title"><h3 id="header1" class="color">Enter Your Initials: </h3></label>
+            <label for="title"><h3 class="color">Enter Your Initials: </h3></label>
             <input type="text" class="form-control" id="orderid" aria-describedby="emailHelp" placeholder="Enter Your Initials"
-                    value="Initials"> -->
+            >
             <div id="base" method="post">
                 <h3 id="header1" class="color">Step 1: Choose Your Base: </h3>
             </div>
@@ -280,10 +280,11 @@
                 var price = base_price + topping_price;
             
                 var status;
-                // var orderid = $('#orderid').val();
+                var orderid = $('#orderid').val();
+                // document.write("hello");
                 // document.write(orderid);
-                // PostURL += orderid;
-                PostURL += "2";
+                PostURL += orderid;
+                // PostURL += "2";
                
                 try {
                     const response =
