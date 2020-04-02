@@ -77,7 +77,8 @@
     </div>
   </header><!-- End Header -->
   <br>
-    <a  id="searchOrderBtn" class="btn btn-primary" href="index.html" >Back to HomePage</a>
+  <div style='padding-left: 100px;'>
+   <a  id="searchOrderBtn" class="btn btn-primary" href="index.html" >Back to HomePage</a></div>
     <br></br>
     <div id="item-container" class="container">
         <h1 class="display-4">Menu</h1>
@@ -92,8 +93,8 @@
     </div>
     <div id="formcontainer" class="container">
         <form id="itemForm">
-            <label for="title"><h3 class="color">Enter Your Initials: </h3></label>
-            <input type="text" class="form-control" id="orderid" aria-describedby="emailHelp" placeholder="Enter Your Initials"
+            <label for="title"><h3 class="color">Enter Your Last 4 Digit NRIC: </h3></label>
+            <input type="text" class="form-control" id="orderid" aria-describedby="emailHelp" placeholder="4-Digit NRIC"
             >
             <div id="base" method="post">
                 <h3 id="header1" class="color">Step 1: Choose Your Base: </h3>
@@ -227,7 +228,7 @@
         event.preventDefault();
 
         var PostURL = "http://127.0.0.1:5001/order/";
-        var homeURL = "thankyou.html";
+        var homeURL = "payment.html";
         
         //Get form datas
 
@@ -281,6 +282,7 @@
             
                 var status;
                 var orderid = $('#orderid').val();
+                
                 PostURL += orderid;
                
                 try {
