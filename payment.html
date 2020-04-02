@@ -83,19 +83,53 @@
                     <script
                       src="https://www.paypal.com/sdk/js?client-id=ATH1F5m7c2lS8prr14izO2-_lLR8AZGz7fYQ_cAblVDOdJ1mNdqbwgS1-Gl_Hu4AyT4_XecZETO6iU0u&currency=SGD&intent=capture&commit=true&components=buttons&debug=true">
                     </script>
-                  
+               
                     <div id="paypal-button-container"></div>
 
                     <!--calls paypal and launches paypal checkout window after clicking the button-->
                     <script>
-                    
+
+
+// async function getPrice(orderId){        
+//             // Change serviceURL to your own
+//             var serviceURL = "http://127.0.0.1:5001/order/" + orderId;
+    
+//              try{
+//                     const response =
+//                       await fetch(
+//                         serviceURL, { method: 'GET' }
+//                     );
+//                     const data = await response.json();
+//                     var orders = data.orders;
+//                     // console.log(order);
+
+//                     if(response.ok){
+//                       for (const order of orders){
+//                         var price = order.totalprice;
+//                       // console.log(price);
+//                       // document.write(price);
+//                       }
+//                     }
+//                     else {
+//                         showError("No price is retrieved")
+//                         console.log(price);
+//                       document.write(price);
+//                     }
+//         }
+//                     catch(error){
+//                       showError('There is a problem updating order data, please try again later.<br />'+error);
+
+
+//                     }
+//                 };
+        
                       paypal.Buttons({
                         createOrder: function(data, actions) {
                           // This function sets up the details of the transaction, including the amount and line item details.
                           return actions.order.create({
                             purchase_units: [{
                               amount: {
-                                value: "4.00"
+                                value: '4.00'
                               }
                             }]
                           });
