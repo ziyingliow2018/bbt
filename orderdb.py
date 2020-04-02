@@ -44,22 +44,7 @@ class Order(db.Model):
         return {"orderid": self.orderid, "base": self.base, 
         "toppings": self.toppings,"totalprice": self.totalprice, "status": self.status}
  
-# app.config['MYSQL_HOST'] = '127.0.0.1'
-# app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_PASSWORD'] = ''
-# app.config['MYSQL_DB'] = 'bubbletea'
-# mysql = MySQL(app)
 
-# @app.route('/hello')
-# def index():
-#    cur = mysql.connection.cursor()
-#    cur.execute('''SELECT * FROM order''')
-#    row_headers=[x[0] for x in cur.description] #this will extract row headers
-#    rv = cur.fetchall()
-#    json_data=[]
-#    for result in rv:
-#         json_data.append(dict(zip(row_headers,result)))
-#    return json.dumps(json_data)
 
 @app.route("/order")
 def get_all():
@@ -106,13 +91,9 @@ def update_status(orderid):
     
     if (order_update):
         orderdetails = order_update.base + ' with ' + order_update.toppings
-        #xs bot
-        # token = '1118152555:AAHxrro7MkFKmrQp1cIvJ17Oq1wF0p4v_Uk' 
-        #zh bot
+
         token = '1010659472:AAHL0PoXGBMKB8-mHY8YDPitOTC6U7j0kwk'
-        #idp grp
-        # chat_id = '-1001240530419'
-        # #zh tele
+
         chat_id = '254976991'
         send_text_url = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text=NRIC+Number:+{orderid},+{orderdetails},+is+ready+for+collection!++Thank+You+for+waiting!+:)'
         requests.get(send_text_url)
@@ -147,22 +128,7 @@ def send_order(order):
     # send the message
     # always inform Monitoring for logging no matter if successful or not
     channel.basic_publish(exchange=exchangename, routing_key="monitoring.info", body=message)
-        # By default, the message is "transient" within the broker;
-        #  i.e., if the monitoring is offline or the broker cannot match the routing key for the message, the message is lost.
-        # If need durability of a message, need to declare the queue in the sender (see sample code below).
-
-    # if "status" in order: # if some error happened in order creation
-    #     # inform Error handler
-    #     print("There has been an error.")
-    # else: 
-    # inform Notification and exit
-        # prepare the channel and send a message to Monitoring
-    # channel.queue_declare(queue='monitoring', durable=True) # make sure the queue used by Shipping exist and durable
-    # channel.queue_bind(exchange=exchangename, queue='monitoring', routing_key='monitoring.info') # make sure the queue is bound to the exchange
-    # channel.basic_publish(exchange=exchangename, routing_key="monitoring.info", body=message,
-    #     properties=pika.BasicProperties(delivery_mode = 2, # make message persistent within the matching queues until it is received by some receiver (the matching queues have to exist and be durable and bound to the exchange, which are ensured by the previous two api calls)
-    #     )
-    # )
+  
     print("Order sent to monitoring.")
     # close the connection to the broker
     connection.close()

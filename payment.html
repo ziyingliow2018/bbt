@@ -90,38 +90,7 @@
                     <script>
 
 
-// async function getPrice(orderId){        
-//             // Change serviceURL to your own
-//             var serviceURL = "http://127.0.0.1:5001/order/" + orderId;
-    
-//              try{
-//                     const response =
-//                       await fetch(
-//                         serviceURL, { method: 'GET' }
-//                     );
-//                     const data = await response.json();
-//                     var orders = data.orders;
-//                     // console.log(order);
 
-//                     if(response.ok){
-//                       for (const order of orders){
-//                         var price = order.totalprice;
-//                       // console.log(price);
-//                       // document.write(price);
-//                       }
-//                     }
-//                     else {
-//                         showError("No price is retrieved")
-//                         console.log(price);
-//                       document.write(price);
-//                     }
-//         }
-//                     catch(error){
-//                       showError('There is a problem updating order data, please try again later.<br />'+error);
-
-
-//                     }
-//                 };
                       var totalprice = sessionStorage.getItem("priceSession");
                       paypal.Buttons({
                         createOrder: function(data, actions) {
