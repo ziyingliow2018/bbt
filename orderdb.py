@@ -174,7 +174,7 @@ serviceURL= "http://127.0.0.1:5001/order"
 
 
 if __name__ == '__main__':
-    print("This is " + os.path.basename(__file__) + ": recieving an order...")
+    print("This is " + os.path.basename(__file__) + ": receiving an order...")
     # send_order(order)
     app.run(port=5001, debug=True)
     

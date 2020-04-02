@@ -92,7 +92,7 @@
         </table>
     </div>
     <div id="formcontainer" class="container">
-        <form id="itemForm">
+        <form id="itemForm" >
             <label for="title"><h3 class="color">Enter Your Last 4 Digit NRIC: </h3></label>
             <input type="text" class="form-control" id="orderid" aria-describedby="emailHelp" placeholder="4-Digit NRIC"
             >
@@ -279,7 +279,7 @@
                     }
                 }
                 var price = base_price + topping_price;
-            
+                sessionStorage.setItem("priceSession", price);
                 var status;
                 var orderid = $('#orderid').val();
                 
