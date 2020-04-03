@@ -126,7 +126,7 @@
             const data = await response.json();
             var order = data;
 
-            // array or array.length are false
+            // if data is retrieved, display data in a table
             if (response.ok) {
                 // for loop to setup all table rows with obtained order data
                 console.log(data);

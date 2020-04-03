@@ -117,7 +117,7 @@
         // anonymous async function 
         // - using await requires the function that calls it to be async
         async function loadData(){        
-            // Change serviceURL to your own
+            // Initialize serviceURL to fetch from orderdb
             var serviceURL = "http://127.0.0.1:5001/order";
     
             try {
@@ -167,12 +167,11 @@
         //update !! // 
 
         async function updateRecord(orderId){
-                // what is data? data is a local variable ... 
-                //var orders = data.orders; 
-                //for (const orders of order){
+                // declare the serviceURL
                 console.log(orderId);
                 var serviceURL = "http://127.0.0.1:5001/order/" +  orderId;
 
+                // update the record using post
                 try {
                     const response =
                         await fetch(

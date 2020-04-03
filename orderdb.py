@@ -5,7 +5,6 @@ import datetime
 from flask import Flask
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-# from flaskext.mysql import MySQL
 from flask_cors import CORS
 from sqlalchemy import Date
 import requests
@@ -22,12 +21,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
  
+# create Order class
 class Order(db.Model):
     __tablename__ = 'order'
  
     orderid = db.Column(db.String(13), primary_key=True, nullable=False)
     base = db.Column(db.String(100), nullable=False)
-    # datetime = db.Column(db.TimeStamp, nullable=False)
     toppings = db.Column(db.String(200), nullable=False)
     totalprice = db.Column(db.Float(precision=2), nullable=False)
     status = db.Column(db.String(15), nullable=False)
@@ -35,7 +34,6 @@ class Order(db.Model):
     def __init__(self, orderid, base, toppings, totalprice, status):
         self.orderid = orderid
         self.base = base
-        # self.datetime = datetime
         self.toppings = toppings
         self.totalprice = totalprice
         self.status = status
@@ -45,11 +43,12 @@ class Order(db.Model):
         "toppings": self.toppings,"totalprice": self.totalprice, "status": self.status}
  
 
-
+# returns all orders
 @app.route("/order")
 def get_all():
     return jsonify({"orders": [order.json() for order in Order.query.all()]})
  
+# returns order by orderid
 @app.route("/order/<string:orderid>")
 def find_by_orderid(orderid):
     order = Order.query.filter_by(orderid=orderid).first()
@@ -57,7 +56,7 @@ def find_by_orderid(orderid):
         return jsonify(order.json())
     return jsonify({"message": "Order not found."}), 404
 
-
+# POST an order
 @app.route("/order/<string:orderid>", methods=['POST'])
 def create_order(orderid):
     status = 201
@@ -81,8 +80,7 @@ def create_order(orderid):
 
 
 
-###
-
+# Update an order
 @app.route("/order/<string:orderid>", methods=['PUT'])
 def update_status(orderid):
     order_update = Order.query.filter_by(orderid=orderid).first()
@@ -109,13 +107,12 @@ def update_status(orderid):
 
 def send_order(order):
     """inform Notification/Monitoring/Error as needed"""
-    # default username / password to the borker are both 'guest'
-    hostname = "localhost" # default broker hostname. Web management interface default at http://localhost:15672
+    hostname = "localhost" # default broker hostname. 
     port = 5672 # default messaging port.
+    
     # connect to the broker and set up a communication channel in the connection
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=hostname, port=port))
-        # Note: various network firewalls, filters, gateways (e.g., SMU VPN on wifi), may hinder the connections;
-        # If "pika.exceptions.AMQPConnectionError" happens, may try again after disconnecting the wifi and/or disabling firewalls
+      
     channel = connection.channel()
 
     # set up the exchange if the exchange doesn't exist
@@ -126,21 +123,18 @@ def send_order(order):
     message = json.dumps('Order Creation Successful!!!!', default=str) # convert a JSON object to a string
 
     # send the message
-    # always inform Monitoring for logging no matter if successful or not
+    # always inform Monitoring for logging
     channel.basic_publish(exchange=exchangename, routing_key="monitoring.info", body=message)
   
     print("Order sent to monitoring.")
     # close the connection to the broker
     connection.close()
 
-# orders = get_everything()
-#orders = index()
-# create_order(orders)
+# get data from orderdb
 serviceURL= "http://127.0.0.1:5001/order"
 
 
 if __name__ == '__main__':
     print("This is " + os.path.basename(__file__) + ": receiving an order...")
-    # send_order(order)
     app.run(port=5001, debug=True)
     

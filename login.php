@@ -86,7 +86,6 @@
 
 
 
-                            //  var_dump($fb_user);
                         } catch (\Facebook\Exceptions\FacebookResponseException $e) {
                             echo  'Graph returned an error: ' . $e->getMessage();
                         } catch (\Facebook\Exceptions\FacebookSDKException $e) {

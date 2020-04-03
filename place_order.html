@@ -111,7 +111,6 @@
         function showError(message) {
             // Hide the table and button in the event of error
             $('#itemTable').hide();
-            // $('#searchOrderBtn').hide();
     
             // Display an error under the main container
             $('#item-container')
@@ -122,10 +121,9 @@
             loadData();
         });
 
-        // anonymous async function 
-        // - using await requires the function that calls it to be async
+        // anonymous async function to fetch data from itemdb
         async function loadData(){        
-            // Change serviceURL to your own
+            // initialize service URL
             var serviceURL = "http://localhost:5000/item";
     
             try {
@@ -138,7 +136,7 @@
                 
                 // array or array.length are false
                 if (!items || !items.length) {
-                    // console.log(data);
+                    console.log(data);
                     showError('Item list empty or undefined.')
                 } else {
                     // for loop to setup all table rows with obtained order data
@@ -152,7 +150,7 @@
                             "<td>" + item.price + "</td>"
                         rows += "<tbody><tr>" + eachRow + "</tr></tbody>";
 
-                        // create radio input for base, stored under div header
+                        // create radio input form element for base
                         if (item.type=="base"){
                             var myDiv= document.getElementById("base");
                             var input= document.createElement("input");
@@ -173,14 +171,13 @@
                     // add all the rows to the table
                     $('#itemTable').append(rows);
 
-                    // add header "Step 2: choose your topping:"
                     var myDiv= document.getElementById("topping");
                     var header=document.getElementById("header2"); 
                     var text=document.createTextNode("Step 2: Select Your Topping: ");
                     header.appendChild(text);
                     myDiv.appendChild(header);
                     for (const item of items) {
-                        //create radio input for topping stored under div topping
+                        //create radio inputform element for topping 
                         if (item.type=="topping"){
                             var myDiv= document.getElementById("topping");
                             var input= document.createElement("input");
@@ -212,7 +209,6 @@
         var form=document.getElementById("itemForm");
         var input= document.createElement("input");
         input.type="submit";
-        // input.onclick="processOrder()";
         form.appendChild(input);
         
         function showError(message) {
@@ -230,8 +226,7 @@
         var PostURL = "http://127.0.0.1:5001/order/";
         var homeURL = "payment.html";
         
-        //Get form datas
-
+        // Get form datas
         var x = document.getElementById('base');
         var inputElements = x.querySelectorAll("input, select, checkbox, textarea");
         for (i=0; i <inputElements.length;i++){
@@ -256,7 +251,7 @@
         });
 
         async function loadData(){        
-            // Change serviceURL to your own
+            // initialze serviceURL
             var serviceURL = "http://localhost:5000/item";
     
             try {
@@ -268,7 +263,7 @@
                 var items = data.items; //the arr is in data.orders of the JSON data
                 console.log(data);
                 for (const item of items) {
-                    //retrieve basename, base price, itemname, itemprice
+                    //retrieve basename, base price, itemname, itemprice from itemdb
                     if (item.itemid==selected_baseid){
                         var base= item.itemname;
                         var base_price= item.price;
@@ -279,12 +274,14 @@
                     }
                 }
                 var price = base_price + topping_price;
+                // store price in a session
                 sessionStorage.setItem("priceSession", price);
                 var status;
                 var orderid = $('#orderid').val();
                 
                 PostURL += orderid;
-               
+                
+               // post a new order to orderdb
                 try {
                     const response =
                         await fetch(
