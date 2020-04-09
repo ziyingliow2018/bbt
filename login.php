@@ -27,7 +27,9 @@
         <div id="formWrapper">
             <div id="form">
                 <div class="logo">
-                    <h1 class="text-center head">SMÖÖ CHÁ</h1>
+                    
+                    <!-- <h1 class="text-center head">SMÖÖ CHÁ</h1> -->
+                    <img src='assets/img/bbt_logo.jpg' style="width:275px;height:120px;">
                 </div>
 
                 <div class="form-item">
@@ -84,7 +86,6 @@
 
 
 
-                            //  var_dump($fb_user);
                         } catch (\Facebook\Exceptions\FacebookResponseException $e) {
                             echo  'Graph returned an error: ' . $e->getMessage();
                         } catch (\Facebook\Exceptions\FacebookSDKException $e) {
